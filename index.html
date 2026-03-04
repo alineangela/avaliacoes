@@ -3,122 +3,162 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Avaliações Google</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <title>Avaliações</title>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:      transparent;
-      --ink:     #1a1410;
       --brand:   #551b2a;
-      --brand-lt:#7a2a3d;
-      --stone:   #e0dbd3;
+      --sand:    #c2a27d;
+      --stone:   #dedad2;
       --muted:   #7a7063;
+      --ink:     #1a1410;
       --card-bg: #f5f4ef;
-      --shadow:  0 2px 16px rgba(26,20,16,.10);
+      --shadow:  0 2px 20px rgba(26,20,16,.09);
+      --gap:     24px;
+      --pad-h:   64px;
     }
 
     html, body {
-      background: var(--bg);
+      background: transparent;
       font-family: 'DM Sans', sans-serif;
       color: var(--ink);
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
+      overflow-x: hidden;
     }
 
-    .widget {
-      width: 100%;
-      padding: 2rem 1.2rem 2.5rem;
-    }
+    .widget { width: 100%; padding: 2.8rem var(--pad-h) 3rem; }
+
+    @media (max-width: 700px) { :root { --pad-h: 44px; } }
+    @media (max-width: 480px) { :root { --pad-h: 36px; } }
 
     /* ── HEADER ── */
     .w-header { text-align: center; margin-bottom: 2rem; }
-    .badge {
-      display: inline-flex; align-items: center; gap: .4rem;
-      background: var(--brand); color: #fff;
-      font-size: .68rem; font-weight: 500; letter-spacing: .13em;
-      text-transform: uppercase; padding: .32rem .85rem;
-      border-radius: 2rem; margin-bottom: .9rem;
-    }
-    .w-header h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-      font-weight: 600; color: var(--ink); line-height: 1.2;
+    .w-title {
+      font-family: Arial, 'Arial Bold', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.25rem, 2.8vw, 1.75rem);
+      color: var(--sand);
+      letter-spacing: .01em;
     }
 
     /* ── SUMMARY ── */
     .summary {
-      display: flex; align-items: center; justify-content: center;
-      gap: 1rem; margin-bottom: .6rem; flex-wrap: wrap;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: .5rem; margin-bottom: 2rem;
     }
     .avg-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.6rem; font-weight: 600;
-      color: var(--brand); line-height: 1;
+      font-family: 'Libre Baskerville', serif;
+      font-weight: 700;
+      font-size: 3.6rem;
+      color: var(--sand);
+      line-height: 1;
     }
-    .avg-details { display: flex; flex-direction: column; gap: .25rem; }
-    .stars-row { display: flex; gap: 3px; }
-    .stars-row .s { font-size: 1.2rem; }
-    .s.on  { color: var(--brand); }
+    .avg-stars { display: flex; gap: 4px; }
+    .avg-stars .s { font-size: 1.2rem; }
+
+    /* all stars sand color */
+    .s.on  { color: var(--sand); }
     .s.off { color: var(--stone); }
-    .total-label { font-size: .78rem; color: var(--muted); }
 
     .divider {
-      width: 48px; height: 2px;
-      background: linear-gradient(90deg, var(--brand), var(--brand-lt));
-      border-radius: 2px; margin: 1.4rem auto 2rem;
+      width: 44px; height: 2px;
+      background: linear-gradient(90deg, var(--brand), var(--sand));
+      border-radius: 2px; margin: 0 auto 2.4rem;
     }
 
-    /* ── GRID ── */
-    .reviews-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 1.2rem;
-      width: 100%;
+    /* ── CAROUSEL ── */
+    .carousel-shell {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0;
     }
 
-    @media (max-width: 600px) {
-      .reviews-grid { grid-template-columns: 1fr; }
-      .avg-num { font-size: 3rem; }
+    /* ── ARROWS ── */
+    .arrow-btn {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--stone);
+      box-shadow: 0 2px 10px rgba(26,20,16,.08);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--brand);
+      font-size: 1.35rem;
+      line-height: 1;
+      transition: background .2s, color .2s, box-shadow .2s, opacity .2s;
+      user-select: none;
+      z-index: 10;
+      margin: 0 12px;
+    }
+    .arrow-btn:hover {
+      background: var(--brand);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(85,27,42,.18);
+    }
+    .arrow-btn.disabled { opacity: .25; pointer-events: none; }
+
+    @media (max-width: 700px) {
+      .arrow-btn { width: 34px; height: 34px; font-size: 1.1rem; margin: 0 6px; }
+    }
+
+    /* ── VIEWPORT ── */
+    .carousel-viewport { flex: 1; overflow: hidden; }
+    .carousel-track {
+      display: flex;
+      gap: var(--gap);
+      transition: transform .44s cubic-bezier(.4,0,.2,1);
+      will-change: transform;
+      align-items: stretch;
     }
 
     /* ── CARD ── */
     .review-card {
+      flex: 0 0 auto;
       background: var(--card-bg);
-      border-radius: .85rem;
-      padding: 1.35rem;
+      border-radius: .9rem;
+      padding: 1.5rem;
       box-shadow: var(--shadow);
       border: 1px solid var(--stone);
       display: flex; flex-direction: column; gap: .85rem;
-      opacity: 0; transform: translateY(14px);
-      animation: fadeUp .45s ease forwards;
     }
-    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
     .card-top { display: flex; align-items: center; gap: .75rem; }
 
     .avatar {
       width: 40px; height: 40px; border-radius: 50%;
       border: 2px solid var(--stone); flex-shrink: 0;
-      background: #e8e2db;
+      background: #e3ddd6;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: .95rem; color: var(--brand); font-weight: 600;
+      font-family: Arial, sans-serif;
+      font-size: .88rem; color: var(--brand); font-weight: 700;
       overflow: hidden;
     }
+    .avatar.panel-avatar { background: var(--sand); color: #fff; border-color: var(--sand); }
     .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
+    .author-block {
+      flex: 1; min-width: 0;
+      display: flex; align-items: center;
+      gap: .5rem; flex-wrap: wrap;
+    }
     .author-name {
-      font-weight: 500; font-size: .9rem;
+      font-weight: 500; font-size: .88rem;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    .star-row { display: flex; gap: 2px; flex-shrink: 0; }
+    .star-row .s { font-size: .8rem; }
 
-    .star-row { display: flex; gap: 2px; }
-    .star-row .s { font-size: .85rem; }
+    @media (max-width: 640px) {
+      .author-block { flex-direction: column; align-items: flex-start; gap: .14rem; }
+    }
 
     .review-text {
-      font-size: .85rem; line-height: 1.7;
+      font-size: .84rem; line-height: 1.72;
       color: #3d342a; font-weight: 300; flex: 1;
     }
     .review-text.clamp {
@@ -127,10 +167,9 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-
     .read-more {
       background: none; border: none; cursor: pointer;
-      color: var(--brand); font-size: .78rem; font-weight: 500;
+      color: var(--brand); font-size: .76rem; font-weight: 500;
       padding: 0; margin-top: .3rem; display: inline-block;
       font-family: 'DM Sans', sans-serif;
     }
@@ -138,113 +177,59 @@
 
     .card-footer {
       border-top: 1px solid var(--stone);
-      padding-top: .7rem;
-      display: flex; align-items: center; gap: .4rem;
+      padding-top: .65rem;
+      display: flex; align-items: center; gap: .38rem;
+      margin-top: auto;
     }
-    .g-icon { width: 14px; height: 14px; flex-shrink: 0; }
-    .card-footer span { font-size: .68rem; color: var(--muted); letter-spacing: .03em; }
+    .g-icon { width: 13px; height: 13px; flex-shrink: 0; }
+    .panel-icon {
+      width: 13px; height: 13px; border-radius: 50%;
+      background: var(--sand); flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .52rem; color: #fff; font-weight: 700;
+    }
+    .card-footer span { font-size: .67rem; color: var(--muted); letter-spacing: .02em; }
+
+    /* ── DOTS ── */
+    .dots {
+      display: flex; justify-content: center;
+      gap: .5rem; margin-top: 1.6rem;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--stone); border: none; padding: 0;
+      cursor: pointer;
+      transition: background .25s, transform .25s;
+    }
+    .dot.active { background: var(--brand); transform: scale(1.35); }
 
     /* ── SKELETON ── */
-    .skel-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 1.2rem;
-    }
-    @media (max-width: 600px) { .skel-grid { grid-template-columns: 1fr; } }
-
-    .skel-card {
-      background: var(--card-bg); border-radius: .85rem;
-      padding: 1.35rem; box-shadow: var(--shadow); border: 1px solid var(--stone);
+    .skel-shell { display: flex; align-items: center; gap: 12px; }
+    .skel-arrow { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+    .skel-row   { display: flex; gap: var(--gap); flex: 1; }
+    .skel-card  {
+      flex: 1; background: var(--card-bg); border-radius: .9rem;
+      padding: 1.5rem; box-shadow: var(--shadow); border: 1px solid var(--stone);
     }
     .sk {
-      background: linear-gradient(90deg, var(--stone) 25%, #ece8e0 50%, var(--stone) 75%);
+      background: linear-gradient(90deg, var(--stone) 25%, #eceae4 50%, var(--stone) 75%);
       background-size: 200% 100%;
       animation: shim 1.4s infinite; border-radius: 5px;
     }
     @keyframes shim { to { background-position: -200% 0; } }
-
-    /* ── MSG BOX ── */
-    .msg-box {
-      max-width: 480px; margin: 0 auto;
-      background: var(--card-bg); border: 1px solid var(--stone);
-      border-radius: 1rem; padding: 1.8rem; text-align: center;
-      box-shadow: var(--shadow);
-    }
-    .msg-box h2 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: .6rem; }
-    .msg-box p  { font-size: .85rem; color: var(--muted); line-height: 1.7; margin-bottom: .35rem; }
-    .msg-box code {
-      background: #edeae4; border: 1px solid var(--stone);
-      border-radius: 4px; padding: .1rem .4rem;
-      font-size: .78rem; color: var(--brand);
-    }
-    .msg-box pre {
-      background: #edeae4; border: 1px solid var(--stone);
-      border-radius: .5rem; padding: .75rem 1rem;
-      font-size: .75rem; text-align: left; overflow-x: auto;
-      margin-top: .5rem; color: #5a4a3a; line-height: 1.6;
-    }
-
-    .btn-back {
-      display: inline-flex; align-items: center; gap: .4rem;
-      margin-top: 1rem; padding: .58rem 1.1rem;
-      border: 1.5px solid var(--stone); border-radius: .5rem;
-      background: transparent; cursor: pointer;
-      font-family: 'DM Sans', sans-serif; font-size: .83rem;
-      color: var(--muted); transition: all .2s;
-    }
-    .btn-back:hover { border-color: var(--brand); color: var(--brand); }
-
-    .form-wrap { text-align: left; }
-    .form-wrap label {
-      display: block; font-size: .73rem; font-weight: 500;
-      letter-spacing: .06em; text-transform: uppercase;
-      color: var(--muted); margin: .85rem 0 .32rem;
-    }
-    .form-wrap input {
-      width: 100%; padding: .68rem .95rem;
-      border: 1px solid var(--stone); border-radius: .5rem;
-      font-family: 'DM Sans', sans-serif; font-size: .87rem;
-      background: #edeae4; color: var(--ink);
-      outline: none; transition: border-color .2s;
-    }
-    .form-wrap input:focus { border-color: var(--brand); }
-    .hint { font-size: .72rem; color: var(--muted); margin-top: .28rem; line-height: 1.5; }
-
-    .btn-primary {
-      margin-top: 1.2rem; width: 100%; padding: .8rem;
-      background: var(--brand); color: #fff; border: none;
-      border-radius: .5rem; font-family: 'Playfair Display', serif;
-      font-size: .98rem; cursor: pointer; transition: opacity .2s;
-    }
-    .btn-primary:hover { opacity: .88; }
-
-    .back-row { margin-bottom: 1.2rem; }
-    .back-row button {
-      background: none; border: none; cursor: pointer;
-      display: inline-flex; align-items: center; gap: .3rem;
-      color: var(--muted); font-family: 'DM Sans', sans-serif;
-      font-size: .82rem; padding: 0; transition: color .2s;
-    }
-    .back-row button:hover { color: var(--brand); }
-
-    .no-rev { text-align: center; color: var(--muted); font-size: .9rem; margin-top: 1.5rem; }
   </style>
 </head>
 <body>
 <div class="widget">
 
   <div class="w-header">
-    <div class="badge">★ Google Meu Negócio</div>
-    <h2>O que nossos clientes dizem</h2>
+    <h2 class="w-title">O que dizem os pacientes</h2>
   </div>
 
   <div id="summary-section" style="display:none">
     <div class="summary">
-      <div class="avg-num" id="avg-num">—</div>
-      <div class="avg-details">
-        <div class="stars-row" id="avg-stars"></div>
-        <div class="total-label" id="avg-total"></div>
-      </div>
+      <div class="avg-num" id="avg-num">5.0</div>
+      <div class="avg-stars" id="avg-stars"></div>
     </div>
     <div class="divider"></div>
   </div>
@@ -265,27 +250,73 @@ const CFG = {
     { label: "Local 2", placeId: "ChIJba89okrj3JQRbHFXw3unq24" },
   ]
 };
+
+/* ── Avaliações manuais — só com texto e nota 5 ── */
+const MANUAL_REVIEWS = [
+  {
+    author_name: "Thaíta Oliveira", rating: 5,
+    text: "Super atenciosa e colaborativa! Verifica de fato suas necessidades e mais do que isso adapta as orientações de forma gradual ao que é possível fazer. Isso facilita já que a grande maioria não consegue seguir as orientações! Estou amando trabalhar com ela!",
+    source: "panel"
+  },
+  {
+    author_name: "Ana Flavia Machado Muniz Andrade", rating: 5,
+    text: "Muito atenciosa e gentil. Disposta a entender e ouvir as necessidades do paciente. Parabéns Aline!",
+    source: "panel"
+  },
+  {
+    author_name: "Cecília Campos Siqueiro", rating: 5,
+    text: "Muito querida e muito simpática, fez questão de conhecer meus hábitos e minha rotina para ajudar meu planejamento. Tem vídeos, dicas e escolhas legais e vai sugerindo alimentos novos para experimentar sem forçar.",
+    source: "panel"
+  },
+  {
+    author_name: "Karoline Candido Silva Ferrari", rating: 5,
+    text: "Adorei a consulta, muito simpática, sabe ouvir e entender nossos relatos.",
+    source: "panel"
+  },
+  {
+    author_name: "Elaine Hagi Vieira Marquezini", rating: 5,
+    text: "Atenciosa em tudo, boa disposição para interação entre paciente e profissional!",
+    source: "panel"
+  },
+  {
+    author_name: "Bruna Marina de Silva Almeida", rating: 5,
+    text: "Mudou minha visão sobre o profissional da nutrição e pretendo seguir a risca cada dia o conselho!",
+    source: "panel"
+  },
+  {
+    author_name: "Anônimo", rating: 5,
+    text: "Perfeita em tudo, atendendo além das expectativas!",
+    source: "panel"
+  },
+  {
+    author_name: "Anônimo", rating: 5,
+    text: "Adoro a abordagem da Aline, super querida, me ouviu bastante, entendeu minha realidade e adaptou tudo para seguirmos da melhor forma!",
+    source: "panel"
+  },
+];
 /* ═══════════════════════════════════════ */
 
 const $ = id => document.getElementById(id);
-const content = $("content");
-const summarySection = $("summary-section");
+const SKIP = new Set(["de","da","do","dos","das","e","von","van"]);
 
-// ── Helpers ───────────────────────────
-const starsHTML = r =>
-  [1,2,3,4,5].map(i => `<span class="s ${i <= Math.round(r) ? "on" : "off"}">★</span>`).join("");
-
-// Abbreviate name: "João Silva Santos" → "João S. S."
-function abbreviateName(name) {
-  if (!name) return "?";
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0];
-  return parts[0] + " " + parts.slice(1).map(p => p[0].toUpperCase() + ".").join(" ");
+function abbrevName(name) {
+  if (!name || name === "Anônimo") return "Anônimo";
+  return name.trim().split(/\s+/)
+    .map(w => w[0].toUpperCase() + ".")
+    .join(" ");
 }
 
-// Initials for avatar: "João Silva" → "JS"
-const initials = n =>
-  (n || "?").split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+function getInitials(name) {
+  if (!name || name === "Anônimo") return "?";
+  const parts = name.trim().split(/\s+/).filter(w => !SKIP.has(w.toLowerCase()));
+  return ((parts[0]?.[0] || "") + (parts[parts.length - 1]?.[0] || "")).toUpperCase();
+}
+
+function starsHTML(rating, size = ".8rem") {
+  return [1,2,3,4,5].map(i =>
+    `<span class="s ${i <= Math.round(rating) ? "on" : "off"}" style="font-size:${size}">★</span>`
+  ).join("");
+}
 
 const gIcon = `<svg class="g-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -294,204 +325,227 @@ const gIcon = `<svg class="g-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/
   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
 </svg>`;
 
+const panelIcon = `<span class="panel-icon">✦</span>`;
+
 // ── Skeleton ──────────────────────────
 function showSkeleton() {
-  summarySection.style.display = "none";
-  let h = '<div class="skel-grid">';
-  for (let i = 0; i < 6; i++) h += `
+  $("summary-section").style.display = "none";
+  const n = window.innerWidth >= 768 ? 3 : 1;
+  let cards = "";
+  for (let i = 0; i < n; i++) cards += `
     <div class="skel-card">
-      <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:.9rem">
-        <div class="sk" style="width:40px;height:40px;border-radius:50%"></div>
+      <div style="display:flex;gap:.7rem;align-items:center;margin-bottom:.9rem">
+        <div class="sk" style="width:40px;height:40px;border-radius:50%;flex-shrink:0"></div>
         <div style="flex:1">
-          <div class="sk" style="height:10px;width:55%;margin-bottom:7px"></div>
-          <div class="sk" style="height:10px;width:30%"></div>
+          <div class="sk" style="height:10px;width:50%;margin-bottom:7px"></div>
+          <div class="sk" style="height:10px;width:32%"></div>
         </div>
       </div>
-      <div class="sk" style="height:10px;width:40%;margin-bottom:10px"></div>
-      <div class="sk" style="height:10px;width:100%;margin-bottom:6px"></div>
-      <div class="sk" style="height:10px;width:85%;margin-bottom:6px"></div>
-      <div class="sk" style="height:10px;width:70%"></div>
+      <div class="sk" style="height:9px;width:100%;margin-bottom:6px"></div>
+      <div class="sk" style="height:9px;width:86%;margin-bottom:6px"></div>
+      <div class="sk" style="height:9px;width:70%"></div>
     </div>`;
-  content.innerHTML = h + "</div>";
+
+  $("content").innerHTML = `
+    <div class="skel-shell">
+      <div class="sk skel-arrow"></div>
+      <div class="skel-row">${cards}</div>
+      <div class="sk skel-arrow"></div>
+    </div>`;
 }
 
-// ── Render all reviews ────────────────
-function renderReviews(allReviews, weightedRating, totalCount) {
-  // Summary bar
-  $("avg-num").textContent   = weightedRating.toFixed(1);
-  $("avg-stars").innerHTML   = starsHTML(weightedRating);
-  $("avg-total").textContent = `${totalCount.toLocaleString("pt-BR")} avaliações no Google`;
-  summarySection.style.display = "block";
+// ── Carousel ──────────────────────────
+const GAP = 24;
+let currentIdx = 0;
+let allCards   = [];
 
-  if (!allReviews.length) {
-    content.innerHTML = '<p class="no-rev">Nenhuma avaliação encontrada.</p>';
-    return;
-  }
+function getPerPage() { return window.innerWidth >= 768 ? 3 : 1; }
 
-  let h = '<div class="reviews-grid">';
-  allReviews.forEach((r, i) => {
-    const delay   = (i * 0.055).toFixed(2);
-    const longTxt = r.text && r.text.length > 300;
-    const id      = `rv${i}`;
-    const abbrev  = abbreviateName(r.author_name);
-    const ini     = initials(r.author_name);
+function buildCard(r, idx) {
+  const isPanel = r.source === "panel";
+  const abbrev  = abbrevName(r.author_name);
+  const ini     = getInitials(r.author_name);
+  const long    = r.text.length > 260;
+  const id      = `rv${idx}`;
 
-    h += `
-      <div class="review-card" style="animation-delay:${delay}s">
-        <div class="card-top">
-          <div class="avatar">
-            ${r.profile_photo_url
-              ? `<img src="${r.profile_photo_url}" alt="${abbrev}">`
-              : ini}
-          </div>
-          <div class="author-name">${abbrev}</div>
+  const avatarInner = r.profile_photo_url
+    ? `<img src="${r.profile_photo_url}" alt="${abbrev}">`
+    : ini;
+
+  const footer = isPanel
+    ? `${panelIcon}<span>Avaliação via painel exclusivo</span>`
+    : `${gIcon}<span>Avaliação via Google</span>`;
+
+  return `
+    <div class="review-card">
+      <div class="card-top">
+        <div class="avatar ${isPanel ? "panel-avatar" : ""}">${avatarInner}</div>
+        <div class="author-block">
+          <span class="author-name">${abbrev}</span>
+          <div class="star-row">${starsHTML(r.rating)}</div>
         </div>
-        <div class="star-row">${starsHTML(r.rating)}</div>
-        ${r.text ? `<div>
-          <div class="review-text ${longTxt ? "clamp" : ""}" id="${id}">${r.text}</div>
-          ${longTxt ? `<button class="read-more" onclick="toggle('${id}',this)">Ler mais</button>` : ""}
-        </div>` : ""}
-        <div class="card-footer">
-          ${gIcon}<span>Avaliação via Google</span>
-        </div>
-      </div>`;
-  });
-  h += "</div>";
-  content.innerHTML = h;
+      </div>
+      <div>
+        <div class="review-text ${long ? "clamp" : ""}" id="${id}">${r.text}</div>
+        ${long ? `<button class="read-more" onclick="toggleTxt('${id}',this)">Ver mais</button>` : ""}
+      </div>
+      <div class="card-footer">${footer}</div>
+    </div>`;
 }
 
-function toggle(id, btn) {
+function renderCarousel(reviews) {
+  const perPage   = getPerPage();
+  const pageCount = Math.ceil(reviews.length / perPage);
+
+  const track = reviews.map((r, i) => buildCard(r, i)).join("");
+  const dots  = Array.from({ length: pageCount }, (_, i) =>
+    `<button class="dot ${i === 0 ? "active" : ""}" onclick="goTo(${i})"></button>`
+  ).join("");
+
+  $("content").innerHTML = `
+    <div class="carousel-shell">
+      <button class="arrow-btn" id="arrow-left" onclick="slide(-1)">&#8249;</button>
+      <div class="carousel-viewport" id="viewport">
+        <div class="carousel-track" id="track">${track}</div>
+      </div>
+      <button class="arrow-btn" id="arrow-right" onclick="slide(1)">&#8250;</button>
+    </div>
+    <div class="dots" id="dots">${dots}</div>`;
+
+  allCards   = Array.from($("track").children);
+  currentIdx = 0;
+  sizeCards();
+  updateArrows();
+  initTouch($("viewport"));
+}
+
+function sizeCards() {
+  const track = $("track");
+  if (!track || !allCards.length) return;
+  const perPage = getPerPage();
+  const viewW   = track.parentElement.offsetWidth;
+  const cardW   = (viewW - GAP * (perPage - 1)) / perPage;
+  allCards.forEach(c => { c.style.width = cardW + "px"; });
+}
+
+function applyTranslate() {
+  const track = $("track");
+  if (!track || !allCards.length) return;
+  const cardW = allCards[0].offsetWidth;
+  track.style.transform = `translateX(-${currentIdx * (cardW + GAP)}px)`;
+}
+
+function updateArrows() {
+  if (!allCards.length) return;
+  const perPage = getPerPage();
+  const maxIdx  = Math.max(0, allCards.length - perPage);
+  $("arrow-left") ?.classList.toggle("disabled", currentIdx === 0);
+  $("arrow-right")?.classList.toggle("disabled", currentIdx >= maxIdx);
+  const dotIdx = Math.round(currentIdx / perPage);
+  document.querySelectorAll(".dot").forEach((d, i) =>
+    d.classList.toggle("active", i === dotIdx));
+}
+
+function slide(dir) {
+  const perPage = getPerPage();
+  const maxIdx  = Math.max(0, allCards.length - perPage);
+  currentIdx    = Math.max(0, Math.min(currentIdx + dir, maxIdx));
+  applyTranslate();
+  updateArrows();
+}
+
+function goTo(pageIdx) {
+  const perPage = getPerPage();
+  currentIdx    = Math.min(pageIdx * perPage, Math.max(0, allCards.length - perPage));
+  applyTranslate();
+  updateArrows();
+}
+
+function toggleTxt(id, btn) {
   const el = document.getElementById(id);
-  btn.textContent = el.classList.toggle("clamp") ? "Ler mais" : "Ler menos";
+  btn.textContent = el.classList.toggle("clamp") ? "Ver mais" : "Ver menos";
 }
 
-// ── Error ─────────────────────────────
-function showError(msg, detail) {
-  summarySection.style.display = "none";
-  content.innerHTML = `
-    <div class="msg-box">
-      <div style="font-size:2rem;margin-bottom:.5rem">⚠️</div>
-      <h2>Erro ao carregar</h2>
-      <p>${msg}</p>
-      ${detail ? `<pre>${detail}</pre>` : ""}
-      <p style="margin-top:.5rem;font-size:.76rem">
-        Pressione <strong>F12</strong> → aba <strong>Console</strong> para ver o erro técnico.
-      </p>
-      <button class="btn-back" onclick="goBack()">← Voltar e tentar novamente</button>
-    </div>`;
+function initTouch(el) {
+  let startX = 0;
+  el.addEventListener("touchstart", e => { startX = e.touches[0].clientX; }, { passive: true });
+  el.addEventListener("touchend",   e => {
+    const dx = startX - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 40) slide(dx > 0 ? 1 : -1);
+  }, { passive: true });
 }
 
-function goBack() {
-  summarySection.style.display = "none";
-  showForm();
+window.addEventListener("resize", () => {
+  currentIdx = 0;
+  sizeCards();
+  const t = $("track");
+  if (t) t.style.transform = "translateX(0)";
+  updateArrows();
+});
+
+// ── Summary ────────────────────────────
+function buildSummary() {
+  $("avg-num").textContent = "5.0";
+  $("avg-stars").innerHTML = starsHTML(5, "1.2rem");
+  $("summary-section").style.display = "block";
 }
 
-// ── Fetch ─────────────────────────────
-function fetchAll(apiKey, locations) {
+// ── Merge — Google first, panel after ──
+// Only rating 5, only with text
+function mergeAndFilter(googleResults) {
+  const googleRevs = googleResults
+    .filter(r => r.ok)
+    .flatMap(r => r.reviews
+      .filter(rev => rev.rating === 5 && rev.text && rev.text.trim())
+      .map(rev => ({ ...rev, source: "google" }))
+    );
+  return [...googleRevs, ...MANUAL_REVIEWS];
+}
+
+// ── Fetch ──────────────────────────────
+function fetchAll() {
   showSkeleton();
 
-  window.gm_authFailure = () =>
-    showError("Falha de autenticação com o Google.", "gm_authFailure — chave inválida ou Maps JavaScript API não ativada.");
+  window.gm_authFailure = () => {
+    buildSummary();
+    renderCarousel(MANUAL_REVIEWS);
+  };
 
   const run = () => {
     const service = new google.maps.places.PlacesService($("map"));
-    const results = new Array(locations.length).fill(null);
+    const results = new Array(CFG.locations.length).fill(null);
     let done = 0;
 
-    locations.forEach((loc, idx) => {
+    CFG.locations.forEach((loc, idx) => {
       service.getDetails(
-        { placeId: loc.placeId, fields: ["name","rating","user_ratings_total","reviews"] },
+        { placeId: loc.placeId, fields: ["reviews"] },
         (place, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            results[idx] = {
-              ok: true,
-              rating: place.rating || 0,
-              totalRatings: place.user_ratings_total || 0,
-              reviews: place.reviews || []
-            };
-          } else {
-            results[idx] = { ok: false, error: `${loc.label}: ${status}` };
+          results[idx] = status === google.maps.places.PlacesServiceStatus.OK
+            ? { ok: true, reviews: place.reviews || [] }
+            : { ok: false, reviews: [] };
+
+          if (++done === CFG.locations.length) {
+            buildSummary();
+            renderCarousel(mergeAndFilter(results));
           }
-
-          done++;
-          if (done < locations.length) return;
-
-          // All done — merge
-          const good = results.filter(r => r.ok);
-          if (!good.length) {
-            showError("Nenhum local carregado.", results.map(r => r.error).join("\n"));
-            return;
-          }
-
-          // Weighted average rating
-          let sumRating = 0, sumCount = 0;
-          good.forEach(r => { sumRating += r.rating * r.totalRatings; sumCount += r.totalRatings; });
-          const weightedRating = sumCount > 0 ? sumRating / sumCount : 0;
-
-          // Merge reviews, sort newest first
-          const allReviews = good.flatMap(r => r.reviews)
-            .sort((a, b) => (b.time || 0) - (a.time || 0));
-
-          renderReviews(allReviews, weightedRating, sumCount);
         }
       );
     });
   };
 
   if (window.google && window.google.maps) { run(); return; }
-
-  window._mapsReady = () => run();
+  window._mapsReady = run;
 
   const old = document.getElementById("gscript");
   if (old) old.remove();
-
-  const s = document.createElement("script");
-  s.id  = "gscript";
-  s.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=_mapsReady`;
-  s.onerror = () => showError(
-    "Não foi possível carregar o script do Google.",
-    "Verifique se a chave é válida ou se há restrição de domínio bloqueando o acesso."
-  );
+  const s   = document.createElement("script");
+  s.id      = "gscript";
+  s.src     = `https://maps.googleapis.com/maps/api/js?key=${CFG.apiKey}&libraries=places&callback=_mapsReady`;
+  s.onerror = () => { buildSummary(); renderCarousel(MANUAL_REVIEWS); };
   document.head.appendChild(s);
 }
 
-// ── Form ──────────────────────────────
-function showForm() {
-  content.innerHTML = `
-    <div class="msg-box">
-      <div style="font-size:1.8rem;margin-bottom:.5rem">🏪</div>
-      <h2>Configurar Widget</h2>
-      <p>Preencha os dados abaixo para carregar todas as avaliações.</p>
-      <div class="form-wrap">
-        <label>🔑 Chave de API</label>
-        <input id="inp-key" type="text" value="${CFG.apiKey}" placeholder="AIzaSy..."/>
-        <p class="hint">Precisa ter <strong>Maps JavaScript API</strong> e <strong>Places API</strong> ativadas.</p>
-
-        <label>📍 Place ID — Local 1</label>
-        <input id="inp-p1" type="text" value="${CFG.locations[0].placeId}" placeholder="ChIJ..."/>
-
-        <label>📍 Place ID — Local 2</label>
-        <input id="inp-p2" type="text" value="${CFG.locations[1].placeId}" placeholder="ChIJ..."/>
-
-        <button class="btn-primary" onclick="submitForm()">Carregar todas as avaliações →</button>
-      </div>
-    </div>`;
-}
-
-function submitForm() {
-  const key = $("inp-key").value.trim();
-  const p1  = $("inp-p1").value.trim();
-  const p2  = $("inp-p2").value.trim();
-  if (!key)       { alert("Informe a chave de API."); return; }
-  if (!p1 || !p2) { alert("Informe os dois Place IDs."); return; }
-  fetchAll(key, [
-    { label: "Local 1", placeId: p1 },
-    { label: "Local 2", placeId: p2 },
-  ]);
-}
-
-// ── Boot ──────────────────────────────
-showForm();
+fetchAll();
 </script>
 </body>
 </html>
