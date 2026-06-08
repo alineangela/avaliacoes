@@ -9,14 +9,17 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      --ink: #3B391E;
+      --ink-soft: rgba(59,57,30,0.66);
+      --ink-line: rgba(59,57,30,0.22);
       --gap: 88px;
       --pad-h: 64px;
     }
 
     html, body {
-      background: #3B391E;
+      background: transparent;
       font-family: 'Inter', sans-serif;
-      color: #fff;
+      color: var(--ink);
       margin: 0;
       padding: 0;
       overflow-x: hidden;
@@ -32,6 +35,7 @@
       display: flex;
       align-items: stretch;
       gap: 0;
+      width: 100%;
     }
 
     .arrow-btn {
@@ -40,12 +44,12 @@
       height: 40px;
       border-radius: 50%;
       background: transparent;
-      border: 1.5px solid rgba(255,255,255,0.85);
+      border: 1.5px solid rgba(59,57,30,0.85);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
+      color: var(--ink);
       font-size: 1.35rem;
       line-height: 1;
       transition: background .2s, opacity .2s;
@@ -54,14 +58,10 @@
       margin: 0 12px;
       margin-top: 4px;
     }
-    .arrow-btn:hover { background: rgba(255,255,255,0.25); }
+    .arrow-btn:hover { background: rgba(59,57,30,0.12); }
     .arrow-btn.disabled { opacity: .22; pointer-events: none; }
 
-    @media (max-width: 700px) {
-      .arrow-btn { width: 34px; height: 34px; font-size: 1.1rem; margin: 0 6px; }
-    }
-
-    .carousel-viewport { flex: 1; overflow: hidden; }
+    .carousel-viewport { flex: 1; min-width: 0; overflow: hidden; }
 
     .carousel-track {
       display: flex;
@@ -73,6 +73,7 @@
 
     .review-card {
       flex: 0 0 auto;
+      min-width: 0;
       background: transparent;
       display: flex;
       flex-direction: column;
@@ -80,13 +81,16 @@
       padding: 0 calc(var(--gap) / 2);
     }
     .review-card:first-child { padding-left: 0; }
-    .review-card + .review-card { border-left: 1px solid rgba(255,255,255,0.25); }
+    .review-card + .review-card { border-left: 1px solid var(--ink-line); }
 
     .review-text {
       font-family: 'Libre Baskerville', serif;
-      font-size: clamp(.88rem, 1.15vw, 1rem);
+      font-size: clamp(.92rem, 1.15vw, 1.04rem);
       line-height: 1.72;
-      color: #fff;
+      color: var(--ink);
+      overflow-wrap: anywhere;
+      word-break: normal;
+      hyphens: auto;
     }
 
     .review-text::before { content: '\201C'; }
@@ -96,6 +100,7 @@
       display: flex;
       align-items: center;
       gap: .85rem;
+      min-width: 0;
     }
 
     .avatar {
@@ -103,14 +108,14 @@
       height: 46px;
       border-radius: 50%;
       flex-shrink: 0;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(59,57,30,0.16);
+      border: 1px solid rgba(59,57,30,0.35);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Inter', sans-serif;
       font-size: .82rem;
-      color: #fff;
+      color: var(--ink);
       font-weight: 500;
       overflow: hidden;
     }
@@ -120,6 +125,7 @@
       display: flex;
       flex-direction: column;
       gap: .22rem;
+      min-width: 0;
     }
 
     .author-name-row {
@@ -131,72 +137,95 @@
       font-family: 'Inter', sans-serif;
       font-weight: 500;
       font-size: .88rem;
-      color: #fff;
+      color: var(--ink);
       letter-spacing: .01em;
+      min-width: 0;
     }
 
     .source-label-row {
       display: flex;
       align-items: center;
       gap: .35rem;
+      min-width: 0;
     }
 
     .star-row { display: flex; gap: 2px; }
-    .star-row .s { font-size: .72rem; color: rgba(255,255,255,0.85); }
+    .star-row .s { font-size: .72rem; color: rgba(59,57,30,0.82); }
 
     .source-label {
       font-family: 'Inter', sans-serif;
       font-size: .68rem;
       font-weight: 400;
-      color: rgba(255,255,255,0.6);
+      color: var(--ink-soft);
     }
 
     .source-label a {
-      color: rgba(255,255,255,0.6);
+      color: var(--ink-soft);
       text-decoration: underline;
       text-underline-offset: 2px;
     }
-    .source-label a:hover { color: #fff; }
+    .source-label a:hover { color: var(--ink); }
+
+    .widget.is-mobile { padding: 1.8rem var(--pad-h) 2.2rem; }
+    .widget.is-mobile .carousel-shell { align-items: flex-start; }
+    .widget.is-mobile .arrow-btn {
+      width: 36px;
+      height: 36px;
+      font-size: 1.15rem;
+      margin: 0 6px;
+      margin-top: 2px;
+    }
+    .widget.is-mobile .review-card,
+    .widget.is-mobile .review-card:first-child {
+      padding-left: 0;
+      padding-right: 0;
+      border-left: none;
+    }
+    .widget.is-mobile .review-card + .review-card { border-left: none; }
+    .widget.is-mobile .review-text {
+      font-size: clamp(.96rem, 4.5vw, 1.1rem);
+      line-height: 1.68;
+    }
+    .widget.is-mobile .card-author {
+      align-items: center;
+      gap: .75rem;
+    }
+    .widget.is-mobile .author-name-row {
+      display: flex;
+      flex-direction: column;
+      gap: .15rem;
+    }
+    .widget.is-mobile .author-name-row .author-last-part {
+      display: block;
+      font-weight: 400;
+      font-size: .75rem;
+      color: var(--ink-soft);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .widget.is-mobile .source-label-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .18rem;
+    }
 
     @media (max-width: 767px) {
+      .widget { padding: 1.8rem var(--pad-h) 2.2rem; }
+      .arrow-btn { width: 36px; height: 36px; font-size: 1.15rem; margin: 0 6px; margin-top: 2px; }
       .review-card,
-      .review-card:first-child {
-        padding-left: 0;
-        padding-right: 0;
-      }
+      .review-card:first-child { padding-left: 0; padding-right: 0; }
       .review-card + .review-card { border-left: none; }
-
-      .card-author {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: .6rem;
-      }
-      .author-details { gap: .3rem; }
-
-      .author-name-row {
-        display: flex;
-        flex-direction: column;
-        gap: .15rem;
-      }
+      .review-text { font-size: clamp(.96rem, 4.5vw, 1.1rem); line-height: 1.68; }
+      .author-name-row { flex-direction: column; gap: .15rem; }
       .author-name-row .author-last-part {
         display: block;
         font-weight: 400;
         font-size: .75rem;
-        color: rgba(255,255,255,0.6);
+        color: var(--ink-soft);
         letter-spacing: .06em;
         text-transform: uppercase;
       }
-
-      .source-label-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: .18rem;
-      }
-
-      .review-text {
-        font-size: 1rem;
-        line-height: 1.7;
-      }
+      .source-label-row { flex-direction: column; align-items: flex-start; gap: .18rem; }
     }
 
     .skel-shell { display: flex; align-items: flex-start; gap: 12px; }
@@ -204,7 +233,7 @@
     .skel-row { display: flex; gap: var(--gap); flex: 1; }
     .skel-card { flex: 1; padding: 0 0 1.4rem; }
     .sk {
-      background: linear-gradient(90deg, rgba(255,255,255,.12) 25%, rgba(255,255,255,.22) 50%, rgba(255,255,255,.12) 75%);
+      background: linear-gradient(90deg, rgba(59,57,30,.10) 25%, rgba(59,57,30,.18) 50%, rgba(59,57,30,.10) 75%);
       background-size: 200% 100%;
       animation: shim 1.4s infinite;
       border-radius: 5px;
@@ -213,7 +242,7 @@
   </style>
 </head>
 <body>
-<div class="widget">
+<div class="widget" id="widget">
   <div id="content"></div>
 </div>
 
@@ -283,11 +312,38 @@ const MANUAL_REVIEWS = [
 
 const $ = id => document.getElementById(id);
 const SKIP = new Set(["de", "da", "do", "dos", "das", "e", "von", "van"]);
-const GAP = 32;
+const DESKTOP_GAP = 32;
 let currentIdx = 0;
 let allCards = [];
+let lastPerPage = 0;
+let renderedReviews = [];
 
-function getPerPage() { return window.innerWidth >= 768 ? 3 : 1; }
+function getWidgetWidth() {
+  const widget = $("widget");
+  const content = $("content");
+  const widthCandidates = [
+    content?.clientWidth,
+    widget?.clientWidth,
+    document.documentElement.clientWidth,
+    window.innerWidth
+  ].filter(Boolean);
+  return Math.min(...widthCandidates);
+}
+
+function getPerPage() {
+  const width = getWidgetWidth();
+  return width >= 1200 ? 3 : 1;
+}
+
+function getGap() {
+  return getPerPage() > 1 ? DESKTOP_GAP : 0;
+}
+
+function syncLayoutClass() {
+  const widget = $("widget");
+  if (!widget) return;
+  widget.classList.toggle("is-mobile", getPerPage() === 1);
+}
 
 function getInitials(name) {
   if (!name || name === "Anônimo") return "?";
@@ -310,7 +366,8 @@ function starsHTML() {
 }
 
 function showSkeleton() {
-  const n = window.innerWidth >= 768 ? 3 : 1;
+  syncLayoutClass();
+  const n = getPerPage();
   let cards = "";
   for (let i = 0; i < n; i++) cards += `
     <div class="skel-card">
@@ -347,7 +404,7 @@ function buildCard(r) {
 
   return `
     <div class="review-card">
-      <div class="review-text">${r.text}</div>
+      <div class="review-text" lang="pt-BR">${r.text}</div>
       <div class="card-author">
         <div class="avatar">${avatarInner}</div>
         <div class="author-details">
@@ -362,14 +419,17 @@ function buildCard(r) {
 }
 
 function renderCarousel(reviews) {
+  renderedReviews = reviews;
+  syncLayoutClass();
+  lastPerPage = getPerPage();
   const track = reviews.map(buildCard).join("");
   $("content").innerHTML = `
     <div class="carousel-shell">
-      <button class="arrow-btn" id="arrow-left" onclick="slide(-1)">&#8249;</button>
+      <button class="arrow-btn" id="arrow-left" onclick="slide(-1)" aria-label="Avaliação anterior">&#8249;</button>
       <div class="carousel-viewport" id="viewport">
         <div class="carousel-track" id="track">${track}</div>
       </div>
-      <button class="arrow-btn" id="arrow-right" onclick="slide(1)">&#8250;</button>
+      <button class="arrow-btn" id="arrow-right" onclick="slide(1)" aria-label="Próxima avaliação">&#8250;</button>
     </div>`;
 
   allCards = Array.from($("track").children);
@@ -380,28 +440,32 @@ function renderCarousel(reviews) {
 }
 
 function sizeCards() {
+  syncLayoutClass();
   const track = $("track");
   if (!track || !allCards.length) return;
   const perPage = getPerPage();
-  const viewW = track.parentElement.offsetWidth;
-  const cardW = perPage === 1 ? viewW : (viewW - GAP * (perPage - 1)) / perPage;
+  const gap = getGap();
+  const viewW = track.parentElement.getBoundingClientRect().width;
+  const cardW = perPage === 1 ? viewW : (viewW - gap * (perPage - 1)) / perPage;
   allCards.forEach(card => {
-    card.style.width = cardW + "px";
+    card.style.width = Math.max(0, cardW) + "px";
     card.style.height = "";
   });
+  applyTranslate();
 }
 
 function applyTranslate() {
   const track = $("track");
   if (!track || !allCards.length) return;
   const cardW = allCards[0].offsetWidth;
-  track.style.transform = `translateX(-${currentIdx * (cardW + GAP)}px)`;
+  track.style.transform = `translateX(-${currentIdx * (cardW + getGap())}px)`;
 }
 
 function updateArrows() {
   if (!allCards.length) return;
   const perPage = getPerPage();
   const maxIdx = Math.max(0, allCards.length - perPage);
+  currentIdx = Math.min(currentIdx, maxIdx);
   $("arrow-left")?.classList.toggle("disabled", currentIdx === 0);
   $("arrow-right")?.classList.toggle("disabled", currentIdx >= maxIdx);
 }
@@ -415,6 +479,8 @@ function slide(dir) {
 }
 
 function initTouch(el) {
+  if (!el || el.dataset.touchReady) return;
+  el.dataset.touchReady = "1";
   let startX = 0;
   el.addEventListener("touchstart", e => { startX = e.touches[0].clientX; }, { passive: true });
   el.addEventListener("touchend", e => {
@@ -423,13 +489,21 @@ function initTouch(el) {
   }, { passive: true });
 }
 
-window.addEventListener("resize", () => {
+function refreshLayout() {
+  const perPage = getPerPage();
+  if (renderedReviews.length && perPage !== lastPerPage) {
+    renderCarousel(renderedReviews);
+    return;
+  }
   currentIdx = 0;
   sizeCards();
-  const track = $("track");
-  if (track) track.style.transform = "translateX(0)";
   updateArrows();
-});
+}
+
+window.addEventListener("resize", refreshLayout);
+if (window.ResizeObserver) {
+  new ResizeObserver(refreshLayout).observe($("widget"));
+}
 
 function mergeAndFilter(googleResults) {
   const googleRevs = googleResults
