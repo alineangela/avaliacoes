@@ -11,10 +11,11 @@
       --ink: #3B391E;
       --ink-soft: rgba(59, 57, 30, .66);
       --ink-line: rgba(59, 57, 30, .22);
-      --pad-x: clamp(10px, 3.6vw, 22px);
-      --arrow: 28px;
-      --nav-gap: clamp(14px, 4vw, 22px);
+      --pad-x: clamp(14px, 5vw, 20px);
+      --arrow: 30px;
+      --nav-gap: clamp(24px, 7vw, 34px);
       --page-gap: 0px;
+      --mobile-stage: clamp(390px, 72vh, 520px);
     }
     html, body {
       width: 100%;
@@ -29,11 +30,12 @@
     .widget {
       width: 100%;
       max-width: 100%;
-      padding: 18px var(--pad-x) 22px;
+      padding: clamp(18px, 5vh, 32px) var(--pad-x) clamp(40px, 9vh, 70px);
       background: transparent;
     }
     .carousel-shell {
       width: 100%;
+      min-height: var(--mobile-stage);
       display: grid;
       grid-template-columns: var(--arrow) minmax(0, 1fr) var(--arrow);
       align-items: center;
@@ -65,15 +67,17 @@
     }
     .carousel-track {
       display: flex;
-      align-items: flex-start;
+      align-items: stretch;
       transition: transform .38s cubic-bezier(.4, 0, .2, 1);
       will-change: transform;
     }
     .review-page {
       flex: 0 0 auto;
       min-width: 0;
+      min-height: var(--mobile-stage);
       display: grid;
       grid-template-columns: minmax(0, 1fr);
+      align-items: center;
       gap: 22px;
     }
     .review-card {
@@ -83,7 +87,8 @@
       color: var(--ink);
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      justify-content: center;
+      gap: 18px;
       padding: 0;
     }
     .review-text {
@@ -91,7 +96,7 @@
       color: var(--ink);
       font-family: 'Libre Baskerville', serif;
       font-size: clamp(12.8px, 3.45vw, 13.8px);
-      line-height: 1.54;
+      line-height: 1.56;
       font-weight: 400;
       overflow-wrap: break-word;
       word-break: normal;
@@ -101,39 +106,15 @@
     .review-text::before { content: '\201C'; }
     .review-text::after { content: '\201D'; }
     .card-author {
-      display: flex;
-      align-items: center;
-      gap: 9px;
       min-width: 0;
-    }
-    .avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 999px;
-      flex: 0 0 auto;
-      background: rgba(59, 57, 30, .14);
-      border: 1px solid rgba(59, 57, 30, .34);
-      color: var(--ink);
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9.5px;
-      font-weight: 600;
-      overflow: hidden;
-    }
-    .avatar:empty::before { content: attr(data-initials); }
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: inherit;
-      display: block;
+      align-items: flex-start;
     }
     .author-details {
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 4px;
     }
     .author-name-row {
       color: var(--ink);
@@ -167,13 +148,15 @@
 
     @media (min-width: 768px) {
       :root {
-        --pad-x: 48px;
+        --pad-x: 58px;
         --arrow: 38px;
         --nav-gap: 0px;
-        --page-gap: 64px;
+        --page-gap: 96px;
+        --mobile-stage: auto;
       }
-      .widget { padding-top: 34px; padding-bottom: 38px; }
+      .widget { padding-top: 34px; padding-bottom: 42px; }
       .carousel-shell {
+        min-height: 0;
         display: flex;
         align-items: center;
       }
@@ -181,17 +164,21 @@
         flex: 0 0 auto;
         width: 38px;
         height: 38px;
-        margin: 0 18px;
+        margin: 0 32px;
         font-size: 1.22rem;
       }
       .carousel-viewport { flex: 1; }
       .review-page {
+        min-height: 0;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         column-gap: var(--page-gap);
         row-gap: 0;
         align-items: start;
       }
-      .review-card { gap: 20px; }
+      .review-card {
+        justify-content: flex-start;
+        gap: 22px;
+      }
       .review-card:not(:first-child)::before {
         content: "";
         position: absolute;
@@ -205,7 +192,6 @@
         font-size: clamp(13.5px, .95vw, 15px);
         line-height: 1.55;
       }
-      .avatar { width: 40px; height: 40px; font-size: 12px; }
       .author-name-row { font-size: 14px; }
       .star-row .s { font-size: 11.5px; }
       .source-label, .source-label a { font-size: 11px; }
@@ -236,22 +222,22 @@ const PLATFORM_REVIEWS = [
 
 const GOOGLE_REVIEWS = [
   { author_name: "Clara De Oliveira", rating: 5, text: `Que consulta incrível!!! Busquei por cuidar da minha seletividade alimentar e nunca pensei que encontraria exatamente o que eu precisava!! Ótima profissional`, source: "google", sourceUrl: GOOGLE_2 },
-  { author_name: "Waldirene Caban", rating: 5, text: `Atendimento de qualidade, tive todas as respostas que precisava ouvir. Dra. Aline é uma excelente profissional, domina o assunto além de ter muito amor pela sua profissão. Ótima localização, um ambiente aconchegante e agradável, onde me senti muito a vontade para falar de minhas queixas. Super indico.`, source: "google", sourceUrl: GOOGLE_2, photo: "https://lh3.googleusercontent.com/a/ACg8ocL7ddxZRMtmpWxFerdujN9BtFGQKZyOHvrmjIhu38QjCQJEDw=s40-w40-c-h40-rp-ba4-br100" },
-  { author_name: "Marina Brandão", rating: 5, text: `Profissional extremamente humanizada e atualizada! O atendimento foi acolhedor e totalmente personalizado para a minha rotina e meu jeito de ser. Senti-me ouvida de verdade, o que fez toda a diferença no processo. Recomendo a todos que desejam se conhecer melhor e compreender como a alimentação pode ser transformadora, curativa e restauradora.`, source: "google", sourceUrl: GOOGLE_2, photo: "https://lh3.googleusercontent.com/a-/ALV-UjWgj1-FKtdppzjSBEJPaTUDG7W-xmPXumSKcM4fXhsQu5yumNdQ3A=s40-w40-c-h40-rp-br100" },
+  { author_name: "Waldirene Caban", rating: 5, text: `Atendimento de qualidade, tive todas as respostas que precisava ouvir. Dra. Aline é uma excelente profissional, domina o assunto além de ter muito amor pela sua profissão. Ótima localização, um ambiente aconchegante e agradável, onde me senti muito a vontade para falar de minhas queixas. Super indico.`, source: "google", sourceUrl: GOOGLE_2 },
+  { author_name: "Marina Brandão", rating: 5, text: `Profissional extremamente humanizada e atualizada! O atendimento foi acolhedor e totalmente personalizado para a minha rotina e meu jeito de ser. Senti-me ouvida de verdade, o que fez toda a diferença no processo. Recomendo a todos que desejam se conhecer melhor e compreender como a alimentação pode ser transformadora, curativa e restauradora.`, source: "google", sourceUrl: GOOGLE_2 },
   { author_name: "Isa Reda", rating: 5, text: `Profissional maravilhosa!! Super atenciosa e dedicada, perfeita no que faz, indico muito, melhor nutri de todas`, source: "google", sourceUrl: GOOGLE_2 },
-  { author_name: "Bruna Alecrim", rating: 5, text: `Profissional muito atenciosa! Tenho problemas com seletividade alimentar desde os 6 anos e não consegui evoluir quase nada nesse aspecto até hoje (28 anos). Com a ajuda da Aline passei a conseguir me permitir experimentar novos alimentos e ampliar meu leque alimentar. Tem sido muito especial. É uma profissional que te escuta ativamente, entende suas dores e sua rotina, faz o processo alimentar ser mais leve. Sempre me senti a vontade para me abrir quanto às minhas questões de seletividade com ela e a mesma sempre foi muito compreensiva, sem julgamentos. É uma benção encontrar uma profissional deste nível! Obrigada, Aline!`, source: "google", sourceUrl: GOOGLE_2, photo: "https://lh3.googleusercontent.com/a-/ALV-UjUYsJ9BeT1jhkRnTbnOUIPFZvFOe2S6ujq1lzZHPL4RCf8JO0I=s40-w40-c-h40-rp-br100" },
+  { author_name: "Bruna Alecrim", rating: 5, text: `Profissional muito atenciosa! Tenho problemas com seletividade alimentar desde os 6 anos e não consegui evoluir quase nada nesse aspecto até hoje (28 anos). Com a ajuda da Aline passei a conseguir me permitir experimentar novos alimentos e ampliar meu leque alimentar. Tem sido muito especial. É uma profissional que te escuta ativamente, entende suas dores e sua rotina, faz o processo alimentar ser mais leve. Sempre me senti a vontade para me abrir quanto às minhas questões de seletividade com ela e a mesma sempre foi muito compreensiva, sem julgamentos. É uma benção encontrar uma profissional deste nível! Obrigada, Aline!`, source: "google", sourceUrl: GOOGLE_2 },
   { author_name: "Sara Lamoglia", rating: 5, text: `Fiz uma consulta e vou voltar! Doutora Aline é muito querida, animada e dedicada, o que faz toda a diferença. Recomendo para quem quer abordagem comportamental!`, source: "google", sourceUrl: GOOGLE_2 },
   { author_name: "Bianca Recevich", rating: 5, text: `Muito atenciosa e precisa. Faz com que tudo se encaixe na rotina e seja do gosto do paciente, tudo muito simples e pratico. É racional, pensa na parte financeira para que o alimentação, suplementos não seja extremamente cara e você consiga manter.`, source: "google", sourceUrl: GOOGLE_2 },
   { author_name: "Tatiane S.O.", rating: 5, text: `Profissional muito atenciosa e capacitada.`, source: "google", sourceUrl: GOOGLE_2 },
   { author_name: "Malu Nasciutti", rating: 5, text: `Excelente. Atendimento diferenciado com uma abordagem mais pessoal e individualizada, que foca nas questões particulares de cada paciente, sem dietas padronizadas.`, source: "google", sourceUrl: GOOGLE_1 },
-  { author_name: "Luiandre Nadalete", rating: 5, text: `Fico até sem comentários pra elogiar uma excelente profissional como essa. Depois de quase 3 anos lidando com a seletividade alimentar de uma criança de 4 anos, após a primeira consulta, os primeiros direcionamentos dado pela Drª Aline, tivemos resultado no primeiro dia com a minha filha comendo salada, feijão, brócolis... coisa que não imaginaríamos ela aceitar tão cedo, parecia uma mágica, mas não, foi técnicas ensinadas pela Drª, explicações de como saber lidar, se como agir, do que fazer, porque só quem passa por isso sabe como ficamos sem rumo, preocupados e culpados pela alimentação da criança. Enfim, só tenho a agradecer imensamente por primeiro nos tranquilizar em relação à situação, e depois nos guiar nessa caminhada que não é fácil. Obrigada Drª Aline, pelo seu excelente trabalho`, source: "google", sourceUrl: GOOGLE_1, photo: "https://lh3.googleusercontent.com/a/ACg8ocJHEMOUxJjI6KxhaKEWZ748JTBndid5TOMosiXTEC8IvWBfGA=s40-w40-c-h40-rp-br100" },
+  { author_name: "Luiandre Nadalete", rating: 5, text: `Fico até sem comentários pra elogiar uma excelente profissional como essa. Depois de quase 3 anos lidando com a seletividade alimentar de uma criança de 4 anos, após a primeira consulta, os primeiros direcionamentos dado pela Drª Aline, tivemos resultado no primeiro dia com a minha filha comendo salada, feijão, brócolis... coisa que não imaginaríamos ela aceitar tão cedo, parecia uma mágica, mas não, foi técnicas ensinadas pela Drª, explicações de como saber lidar, se como agir, do que fazer, porque só quem passa por isso sabe como ficamos sem rumo, preocupados e culpados pela alimentação da criança. Enfim, só tenho a agradecer imensamente por primeiro nos tranquilizar em relação à situação, e depois nos guiar nessa caminhada que não é fácil. Obrigada Drª Aline, pelo seu excelente trabalho`, source: "google", sourceUrl: GOOGLE_1 },
   { author_name: "Isadora Schiefler", rating: 5, text: `A Aline tem um nível altíssimo de diferenciação e excelência. Ela vai muito além de uma dieta pronta. Ela entende você, sua rotina, seus gostos, seus problemas e procura adaptar tudo para a gente. E consegue demais! Posso dizer que já tive umas 05 nutris, mas com certeza a Aline é minha preferida! Recomendo muito!`, source: "google", sourceUrl: GOOGLE_1 },
   { author_name: "Agatha Carnevale", rating: 5, text: `Ótimo atendimento! Aline é muito atenciosa e faz com que você se sinta confortável em compartilhar durante a sessão, permitindo que seja aproveitada ao máximo. Além de possuir muito conhecimento e passar segurança ao paciente.`, source: "google", sourceUrl: GOOGLE_1 },
   { author_name: "Hellyn Kerecz Borim", rating: 5, text: `Por fazer acompanhamento nutricional desde a infância, posso dizer que a Aline tem uma abordagem técnica bastante interessante, diferente do que vi e vivi até hoje! A nutri é querida, acolhedora, respeitosa e atenciosa.`, source: "google", sourceUrl: GOOGLE_1 },
   { author_name: "Camily Pereira", rating: 5, text: `A doutora Aline é maravilhosa!!! Durante todas as consultas, ela me guiou pela mão e me fez entender que é possível viver o processo mesmo que seja difícil. Ela tornou tudo mais fácil, me auxiliando e proporcionando materiais para utilizar no dia a dia. Ela virou um novo divertidamente na minha cabeça!!! A cada refeição desafiadora, a voz dela e nossas conversas aparecem como um lembrete de que não estou sozinha e que sou capaz`, source: "google", sourceUrl: GOOGLE_1 },
   { author_name: "Carolina Camille", rating: 5, text: `Amei a consulta que tive com a Aline!! Me identifiquei com a abordagem que ela utiliza na nutrição e todo atendimento foi regado com todo acolhimento, compreensão das minhas necessidades, cuidado com a alimentação e acompanhamento de perto. Recomendo a todos que estão em busca de iniciar uma jornada de pazes com a alimentação!!`, source: "google", sourceUrl: GOOGLE_1 },
-  { author_name: "Bruna Alecrim", rating: 5, text: `A Aline é uma profissional que realmente se importa com seus pacientes. Ela é ética e busca sempre os melhores caminhos para ajudar com as questões alimentares. A gente se sente a vontade para expor nossas vulnerabilidades. Indico de olhos fechados! Maravilhosa!`, source: "google", sourceUrl: GOOGLE_1, photo: "https://lh3.googleusercontent.com/a-/ALV-UjUYsJ9BeT1jhkRnTbnOUIPFZvFOe2S6ujq1lzZHPL4RCf8JO0I=s40-w40-c-h40-rp-br100" },
-  { author_name: "Sofia Pacheco", rating: 5, text: `A Aline foi uma benção da minha vida. Além de ser minha nutricionista e ajudar com todas as questões alimentares e dúvidas que sempre tive, ela virou uma conselheira e amiga. Me senti à vontade para contar para ela sobre tudo o que já passei em relação a dietas, restrições e situações difíceis com alimentos na minha vida. Antes de passar qualquer tipo de plano e indicações, ela quis cuidar de mim e entender oq se passa na minha cabeça. Um carinho, cuidado e presença sem igual. Sempre me mandando mensagem, perguntando como estou me sentindo em relação ao que é passado na consulta, dicas para todas as áreas da minha vida. Tem sido uma experiência maravilhosa ter esse acompanhamento com uma pessoa e profissional maravilhosa! Recomendo para todos que posso.`, source: "google", sourceUrl: GOOGLE_1, photo: "https://lh3.googleusercontent.com/a-/ALV-UjXiiUPVPzCrR6jlFKMN7suAqWO2kwnHE21DBf3m5A1TdDautw4=s40-w40-c-h40-rp-br100" }
+  { author_name: "Bruna Alecrim", rating: 5, text: `A Aline é uma profissional que realmente se importa com seus pacientes. Ela é ética e busca sempre os melhores caminhos para ajudar com as questões alimentares. A gente se sente a vontade para expor nossas vulnerabilidades. Indico de olhos fechados! Maravilhosa!`, source: "google", sourceUrl: GOOGLE_1 },
+  { author_name: "Sofia Pacheco", rating: 5, text: `A Aline foi uma benção da minha vida. Além de ser minha nutricionista e ajudar com todas as questões alimentares e dúvidas que sempre tive, ela virou uma conselheira e amiga. Me senti à vontade para contar para ela sobre tudo o que já passei em relação a dietas, restrições e situações difíceis com alimentos na minha vida. Antes de passar qualquer tipo de plano e indicações, ela quis cuidar de mim e entender oq se passa na minha cabeça. Um carinho, cuidado e presença sem igual. Sempre me mandando mensagem, perguntando como estou me sentindo em relação ao que é passado na consulta, dicas para todas as áreas da minha vida. Tem sido uma experiência maravilhosa ter esse acompanhamento com uma pessoa e profissional maravilhosa! Recomendo para todos que posso.`, source: "google", sourceUrl: GOOGLE_1 }
 ];
 
 const REVIEWS = [
@@ -267,7 +253,6 @@ const REVIEWS = [
 ].filter(Boolean);
 
 const $ = id => document.getElementById(id);
-const SKIP = new Set(["de", "da", "do", "dos", "das", "e", "von", "van"]);
 let currentPage = 0;
 let pages = [];
 let lastPerPage = 0;
@@ -284,14 +269,9 @@ function chunk(items, size) {
   for (let i = 0; i < items.length; i += size) chunks.push(items.slice(i, i + size));
   return chunks;
 }
-function initials(name) {
-  if (!name || name === "Anônimo") return "?";
-  const parts = name.trim().split(/\s+/).filter(w => !SKIP.has(w.toLowerCase()));
-  return ((parts[0]?.[0] || "") + (parts[parts.length - 1]?.[0] || "")).toUpperCase();
-}
 function displayName(review) {
   const name = review.author_name || "Anônimo";
-  if (review.source === "google" || name === "Anônimo") return name;
+  if (name === "Anônimo") return name;
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0];
   return `${parts[0]} ${parts.slice(1).map(w => w[0].toUpperCase() + ".").join(" ")}`;
@@ -299,13 +279,6 @@ function displayName(review) {
 function stars() { return [1,2,3,4,5].map(() => '<span class="s">&#9733;</span>').join(''); }
 function escapeHTML(value) {
   return String(value || "").replace(/[&<>"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
-}
-function avatarHTML(review) {
-  const initialsText = initials(review.author_name);
-  if (review.source === "google" && review.photo) {
-    return `<div class="avatar" data-initials="${escapeHTML(initialsText)}"><img src="${escapeHTML(review.photo)}" alt="${escapeHTML(displayName(review))}" onerror="this.remove()"></div>`;
-  }
-  return `<div class="avatar" data-initials="${escapeHTML(initialsText)}">${escapeHTML(initialsText)}</div>`;
 }
 function sourceHTML(review) {
   if (review.source === "google") {
@@ -319,7 +292,6 @@ function card(review) {
     <meta itemprop="itemReviewed" content="Aline Angela Nutricionista Comportamental">
     <p class="review-text" lang="pt-BR" itemprop="reviewBody">${escapeHTML(review.text)}</p>
     <div class="card-author">
-      ${avatarHTML(review)}
       <div class="author-details">
         <div class="author-name-row" itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">&mdash; ${escapeHTML(name)}</span></div>
         <div class="source-label-row">
