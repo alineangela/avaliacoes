@@ -14,7 +14,7 @@
       --pad-x: clamp(10px, 3.6vw, 22px);
       --arrow: 28px;
       --nav-gap: clamp(14px, 4vw, 22px);
-      --card-gap: 0px;
+      --page-gap: 0px;
     }
     html, body {
       width: 100%;
@@ -25,6 +25,7 @@
       font-family: Inter, sans-serif;
       overflow-x: hidden;
     }
+    body { -webkit-text-size-adjust: 100%; }
     .widget {
       width: 100%;
       max-width: 100%;
@@ -65,14 +66,18 @@
     .carousel-track {
       display: flex;
       align-items: flex-start;
-      gap: var(--card-gap);
       transition: transform .38s cubic-bezier(.4, 0, .2, 1);
       will-change: transform;
-      touch-action: pan-y;
+    }
+    .review-page {
+      flex: 0 0 auto;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 22px;
     }
     .review-card {
       position: relative;
-      flex: 0 0 auto;
       min-width: 0;
       background: transparent;
       color: var(--ink);
@@ -86,11 +91,12 @@
       color: var(--ink);
       font-family: 'Libre Baskerville', serif;
       font-size: clamp(12.8px, 3.45vw, 13.8px);
-      line-height: 1.58;
+      line-height: 1.54;
       font-weight: 400;
-      overflow-wrap: normal;
+      overflow-wrap: break-word;
       word-break: normal;
       hyphens: none;
+      -webkit-hyphens: none;
     }
     .review-text::before { content: '\201C'; }
     .review-text::after { content: '\201D'; }
@@ -115,11 +121,13 @@
       font-weight: 600;
       overflow: hidden;
     }
+    .avatar:empty::before { content: attr(data-initials); }
     .avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       border-radius: inherit;
+      display: block;
     }
     .author-details {
       min-width: 0;
@@ -161,14 +169,13 @@
       :root {
         --pad-x: 48px;
         --arrow: 38px;
-        --nav-gap: 18px;
-        --card-gap: 64px;
+        --nav-gap: 0px;
+        --page-gap: 64px;
       }
       .widget { padding-top: 34px; padding-bottom: 38px; }
       .carousel-shell {
         display: flex;
         align-items: center;
-        gap: 0;
       }
       .arrow-btn {
         flex: 0 0 auto;
@@ -178,19 +185,25 @@
         font-size: 1.22rem;
       }
       .carousel-viewport { flex: 1; }
-      .review-card { gap: 22px; }
+      .review-page {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        column-gap: var(--page-gap);
+        row-gap: 0;
+        align-items: start;
+      }
+      .review-card { gap: 20px; }
       .review-card:not(:first-child)::before {
         content: "";
         position: absolute;
-        left: calc(var(--card-gap) / -2);
+        left: calc(var(--page-gap) / -2);
         top: 0;
         bottom: 0;
         width: 1px;
         background: var(--ink-line);
       }
       .review-text {
-        font-size: clamp(14px, 1.1vw, 16px);
-        line-height: 1.64;
+        font-size: clamp(13.5px, .95vw, 15px);
+        line-height: 1.55;
       }
       .avatar { width: 40px; height: 40px; font-size: 12px; }
       .author-name-row { font-size: 14px; }
@@ -200,141 +213,164 @@
   </style>
 </head>
 <body>
-<div class="widget" id="widget"><div id="content"></div></div>
-<div id="map" style="display:none"></div>
+<section class="widget" id="widget" itemscope itemtype="https://schema.org/LocalBusiness">
+  <meta itemprop="name" content="Aline Angela Nutricionista Comportamental" />
+  <div id="content"></div>
+</section>
 <script>
-const CFG = {
-  apiKey: "AIzaSyBHJkUQN1gaLkH2HVXVW-V3WY6lTGJX7rs",
-  locations: [
-    {
-      label: "Google 1",
-      placeId: "ChIJM9FLeUXl3JQRIP4GrM3Iw1M",
-      googleUrl: "https://share.google/ogMIYW8WqEn9OXDlb"
-    },
-    {
-      label: "Google 2",
-      placeId: "ChIJba89okrj3JQRbHFXw3unq24",
-      googleUrl: "https://share.google/qUKYIII7ttWxf7OEA"
-    }
-  ]
-};
+const GOOGLE_1 = "https://share.google/ogMIYW8WqEn9OXDlb";
+const GOOGLE_2 = "https://share.google/qUKYIII7ttWxf7OEA";
 
 const PLATFORM_REVIEWS = [
-  { author_name: "Bruna Marina da Silva Almeida", rating: 5, text: "Conversar com Aline é como se estivesse conversando com uma amiga próxima, ela entende e compreende e com base nisso, ela fala o que você precisa. Demonstra que não existe nada melhor que cuidar de nós mesmos, não só passa dieta como me ensina também!!", source: "platform" },
-  { author_name: "Cecília Campos Siqueira", rating: 5, text: "Aline é uma profissional excepcional, me ajudou a ajustar a alimentação à minha rotina e às minhas necessidades, ao mesmo tempo que me apresentou novos alimentos e opções. Os atendimentos são ótimos, leves e atenciosos. Têm feito muita diferença na minha saúde e disposição para manter a constância com uma boa alimentação, que eu consigo fazer rolar no meu dia a dia e realmente gostar! Muito obrigada, querida :)", source: "platform" },
-  { author_name: "Ana Flavia Machado Muniz Andrade", rating: 5, text: "Muito atenciosa e gentil. Disposta a entender e ouvir as necessidades do paciente. Parabéns Aline!", source: "platform" },
-  { author_name: "Thalita Oliveira", rating: 5, text: "Super atenciosa e cuidadosa! Verifica de fato suas necessidades e mais do que isso adapta as orientações de forma palpável ao que vc pode fazer. Isso facilita já que a grande maioria não verifica se de fato vc vai conseguir seguir as orientações! Estou amando trabalhar com ela!", source: "platform" },
-  { author_name: "Karolina Candido Silva Ferrari", rating: 5, text: "Adorei a consulta, muito simpática, sabe ouvir e entender nosssa rotina.", source: "platform" },
-  { author_name: "Elaine Magi Vieira Marquezini", rating: 5, text: "Atenciosa e com boa disposição para interação entre paciente e profissional!", source: "platform" },
-  { author_name: "Anônimo", rating: 5, text: "Perfeita em tudo, atendendo além das expectativas!!", source: "platform" },
-  { author_name: "Bruna Marina da Silva Almeida", rating: 5, text: "Mudou minha visão sobre o profissional da nutrição e pretendo seguir a risca cada dica e conselho!", source: "platform" },
-  { author_name: "Cecília Campos Siqueira", rating: 5, text: "Muito querida e muito simpática, fez questão de conhecer meus hábitos e minha rotina para ajustar meu plano alimentar a isso, e não impor uma dieta que eu não daria conta de seguir no dia a dia. Tem várias dicas e receitas legais e vai sugerindo alimentos novos para experimentar sem forçar.", source: "platform" },
-  { author_name: "Anônimo", rating: 5, text: "Adorei a abordagem da Aline, super querida, me ouviu bastante, entendeu minha realidade e adaptou tudo para seguirmos da melhor forma!", source: "platform" }
-].map((review, index) => ({ ...review, platformOrder: index, time: review.date ? Date.parse(review.date) : 0 }));
+  { author_name: "Bruna Marina da Silva Almeida", rating: 5, text: `Conversar com Aline é como se estivesse conversando com uma amiga próxima, ela entende e compreende e com base nisso, ela fala o que você precisa. Demonstra que não existe nada melhor que cuidar de nós mesmos, não só passa dieta como me ensina também!!`, source: "platform" },
+  { author_name: "Cecília Campos Siqueira", rating: 5, text: `Aline é uma profissional excepcional, me ajudou a ajustar a alimentação à minha rotina e às minhas necessidades, ao mesmo tempo que me apresentou novos alimentos e opções. Os atendimentos são ótimos, leves e atenciosos. Têm feito muita diferença na minha saúde e disposição para manter a constância com uma boa alimentação, que eu consigo fazer rolar no meu dia a dia e realmente gostar! Muito obrigada, querida :)`, source: "platform" },
+  { author_name: "Ana Flavia Machado Muniz Andrade", rating: 5, text: `Muito atenciosa e gentil. Disposta a entender e ouvir as necessidades do paciente. Parabéns Aline!`, source: "platform" },
+  { author_name: "Thalita Oliveira", rating: 5, text: `Super atenciosa e cuidadosa! Verifica de fato suas necessidades e mais do que isso adapta as orientações de forma palpável ao que vc pode fazer. Isso facilita já que a grande maioria não verifica se de fato vc vai conseguir seguir as orientações! Estou amando trabalhar com ela!`, source: "platform" },
+  { author_name: "Karolina Candido Silva Ferrari", rating: 5, text: `Adorei a consulta, muito simpática, sabe ouvir e entender nosssa rotina.`, source: "platform" },
+  { author_name: "Elaine Magi Vieira Marquezini", rating: 5, text: `Atenciosa e com boa disposição para interação entre paciente e profissional!`, source: "platform" },
+  { author_name: "Anônimo", rating: 5, text: `Perfeita em tudo, atendendo além das expectativas!!`, source: "platform" },
+  { author_name: "Bruna Marina da Silva Almeida", rating: 5, text: `Mudou minha visão sobre o profissional da nutrição e pretendo seguir a risca cada dica e conselho!`, source: "platform" },
+  { author_name: "Cecília Campos Siqueira", rating: 5, text: `Muito querida e muito simpática, fez questão de conhecer meus hábitos e minha rotina para ajustar meu plano alimentar a isso, e não impor uma dieta que eu não daria conta de seguir no dia a dia. Tem várias dicas e receitas legais e vai sugerindo alimentos novos para experimentar sem forçar.`, source: "platform" },
+  { author_name: "Anônimo", rating: 5, text: `Adorei a abordagem da Aline, super querida, me ouviu bastante, entendeu minha realidade e adaptou tudo para seguirmos da melhor forma!`, source: "platform" }
+];
+
+const GOOGLE_REVIEWS = [
+  { author_name: "Clara De Oliveira", rating: 5, text: `Que consulta incrível!!! Busquei por cuidar da minha seletividade alimentar e nunca pensei que encontraria exatamente o que eu precisava!! Ótima profissional`, source: "google", sourceUrl: GOOGLE_2 },
+  { author_name: "Waldirene Caban", rating: 5, text: `Atendimento de qualidade, tive todas as respostas que precisava ouvir. Dra. Aline é uma excelente profissional, domina o assunto além de ter muito amor pela sua profissão. Ótima localização, um ambiente aconchegante e agradável, onde me senti muito a vontade para falar de minhas queixas. Super indico.`, source: "google", sourceUrl: GOOGLE_2, photo: "https://lh3.googleusercontent.com/a/ACg8ocL7ddxZRMtmpWxFerdujN9BtFGQKZyOHvrmjIhu38QjCQJEDw=s40-w40-c-h40-rp-ba4-br100" },
+  { author_name: "Marina Brandão", rating: 5, text: `Profissional extremamente humanizada e atualizada! O atendimento foi acolhedor e totalmente personalizado para a minha rotina e meu jeito de ser. Senti-me ouvida de verdade, o que fez toda a diferença no processo. Recomendo a todos que desejam se conhecer melhor e compreender como a alimentação pode ser transformadora, curativa e restauradora.`, source: "google", sourceUrl: GOOGLE_2, photo: "https://lh3.googleusercontent.com/a-/ALV-UjWgj1-FKtdppzjSBEJPaTUDG7W-xmPXumSKcM4fXhsQu5yumNdQ3A=s40-w40-c-h40-rp-br100" },
+  { author_name: "Isa Reda", rating: 5, text: `Profissional maravilhosa!! Super atenciosa e dedicada, perfeita no que faz, indico muito, melhor nutri de todas`, source: "google", sourceUrl: GOOGLE_2 },
+  { author_name: "Bruna Alecrim", rating: 5, text: `Profissional muito atenciosa! Tenho problemas com seletividade alimentar desde os 6 anos e não consegui evoluir quase nada nesse aspecto até hoje (28 anos). Com a ajuda da Aline passei a conseguir me permitir experimentar novos alimentos e ampliar meu leque alimentar. Tem sido muito especial. É uma profissional que te escuta ativamente, entende suas dores e sua rotina, faz o processo alimentar ser mais leve. Sempre me senti a vontade para me abrir quanto às minhas questões de seletividade com ela e a mesma sempre foi muito compreensiva, sem julgamentos. É uma benção encontrar uma profissional deste nível! Obrigada, Aline!`, source: "google", sourceUrl: GOOGLE_2, photo: "https://lh3.googleusercontent.com/a-/ALV-UjUYsJ9BeT1jhkRnTbnOUIPFZvFOe2S6ujq1lzZHPL4RCf8JO0I=s40-w40-c-h40-rp-br100" },
+  { author_name: "Sara Lamoglia", rating: 5, text: `Fiz uma consulta e vou voltar! Doutora Aline é muito querida, animada e dedicada, o que faz toda a diferença. Recomendo para quem quer abordagem comportamental!`, source: "google", sourceUrl: GOOGLE_2 },
+  { author_name: "Bianca Recevich", rating: 5, text: `Muito atenciosa e precisa. Faz com que tudo se encaixe na rotina e seja do gosto do paciente, tudo muito simples e pratico. É racional, pensa na parte financeira para que o alimentação, suplementos não seja extremamente cara e você consiga manter.`, source: "google", sourceUrl: GOOGLE_2 },
+  { author_name: "Tatiane S.O.", rating: 5, text: `Profissional muito atenciosa e capacitada.`, source: "google", sourceUrl: GOOGLE_2 },
+  { author_name: "Malu Nasciutti", rating: 5, text: `Excelente. Atendimento diferenciado com uma abordagem mais pessoal e individualizada, que foca nas questões particulares de cada paciente, sem dietas padronizadas.`, source: "google", sourceUrl: GOOGLE_1 },
+  { author_name: "Luiandre Nadalete", rating: 5, text: `Fico até sem comentários pra elogiar uma excelente profissional como essa. Depois de quase 3 anos lidando com a seletividade alimentar de uma criança de 4 anos, após a primeira consulta, os primeiros direcionamentos dado pela Drª Aline, tivemos resultado no primeiro dia com a minha filha comendo salada, feijão, brócolis... coisa que não imaginaríamos ela aceitar tão cedo, parecia uma mágica, mas não, foi técnicas ensinadas pela Drª, explicações de como saber lidar, se como agir, do que fazer, porque só quem passa por isso sabe como ficamos sem rumo, preocupados e culpados pela alimentação da criança. Enfim, só tenho a agradecer imensamente por primeiro nos tranquilizar em relação à situação, e depois nos guiar nessa caminhada que não é fácil. Obrigada Drª Aline, pelo seu excelente trabalho`, source: "google", sourceUrl: GOOGLE_1, photo: "https://lh3.googleusercontent.com/a/ACg8ocJHEMOUxJjI6KxhaKEWZ748JTBndid5TOMosiXTEC8IvWBfGA=s40-w40-c-h40-rp-br100" },
+  { author_name: "Isadora Schiefler", rating: 5, text: `A Aline tem um nível altíssimo de diferenciação e excelência. Ela vai muito além de uma dieta pronta. Ela entende você, sua rotina, seus gostos, seus problemas e procura adaptar tudo para a gente. E consegue demais! Posso dizer que já tive umas 05 nutris, mas com certeza a Aline é minha preferida! Recomendo muito!`, source: "google", sourceUrl: GOOGLE_1 },
+  { author_name: "Agatha Carnevale", rating: 5, text: `Ótimo atendimento! Aline é muito atenciosa e faz com que você se sinta confortável em compartilhar durante a sessão, permitindo que seja aproveitada ao máximo. Além de possuir muito conhecimento e passar segurança ao paciente.`, source: "google", sourceUrl: GOOGLE_1 },
+  { author_name: "Hellyn Kerecz Borim", rating: 5, text: `Por fazer acompanhamento nutricional desde a infância, posso dizer que a Aline tem uma abordagem técnica bastante interessante, diferente do que vi e vivi até hoje! A nutri é querida, acolhedora, respeitosa e atenciosa.`, source: "google", sourceUrl: GOOGLE_1 },
+  { author_name: "Camily Pereira", rating: 5, text: `A doutora Aline é maravilhosa!!! Durante todas as consultas, ela me guiou pela mão e me fez entender que é possível viver o processo mesmo que seja difícil. Ela tornou tudo mais fácil, me auxiliando e proporcionando materiais para utilizar no dia a dia. Ela virou um novo divertidamente na minha cabeça!!! A cada refeição desafiadora, a voz dela e nossas conversas aparecem como um lembrete de que não estou sozinha e que sou capaz`, source: "google", sourceUrl: GOOGLE_1 },
+  { author_name: "Carolina Camille", rating: 5, text: `Amei a consulta que tive com a Aline!! Me identifiquei com a abordagem que ela utiliza na nutrição e todo atendimento foi regado com todo acolhimento, compreensão das minhas necessidades, cuidado com a alimentação e acompanhamento de perto. Recomendo a todos que estão em busca de iniciar uma jornada de pazes com a alimentação!!`, source: "google", sourceUrl: GOOGLE_1 },
+  { author_name: "Bruna Alecrim", rating: 5, text: `A Aline é uma profissional que realmente se importa com seus pacientes. Ela é ética e busca sempre os melhores caminhos para ajudar com as questões alimentares. A gente se sente a vontade para expor nossas vulnerabilidades. Indico de olhos fechados! Maravilhosa!`, source: "google", sourceUrl: GOOGLE_1, photo: "https://lh3.googleusercontent.com/a-/ALV-UjUYsJ9BeT1jhkRnTbnOUIPFZvFOe2S6ujq1lzZHPL4RCf8JO0I=s40-w40-c-h40-rp-br100" },
+  { author_name: "Sofia Pacheco", rating: 5, text: `A Aline foi uma benção da minha vida. Além de ser minha nutricionista e ajudar com todas as questões alimentares e dúvidas que sempre tive, ela virou uma conselheira e amiga. Me senti à vontade para contar para ela sobre tudo o que já passei em relação a dietas, restrições e situações difíceis com alimentos na minha vida. Antes de passar qualquer tipo de plano e indicações, ela quis cuidar de mim e entender oq se passa na minha cabeça. Um carinho, cuidado e presença sem igual. Sempre me mandando mensagem, perguntando como estou me sentindo em relação ao que é passado na consulta, dicas para todas as áreas da minha vida. Tem sido uma experiência maravilhosa ter esse acompanhamento com uma pessoa e profissional maravilhosa! Recomendo para todos que posso.`, source: "google", sourceUrl: GOOGLE_1, photo: "https://lh3.googleusercontent.com/a-/ALV-UjXiiUPVPzCrR6jlFKMN7suAqWO2kwnHE21DBf3m5A1TdDautw4=s40-w40-c-h40-rp-br100" }
+];
+
+const REVIEWS = [
+  GOOGLE_REVIEWS[0], PLATFORM_REVIEWS[0], GOOGLE_REVIEWS[1],
+  PLATFORM_REVIEWS[1], GOOGLE_REVIEWS[2], PLATFORM_REVIEWS[2],
+  GOOGLE_REVIEWS[3], PLATFORM_REVIEWS[3], GOOGLE_REVIEWS[4],
+  PLATFORM_REVIEWS[4], GOOGLE_REVIEWS[5], PLATFORM_REVIEWS[5],
+  GOOGLE_REVIEWS[6], PLATFORM_REVIEWS[6], GOOGLE_REVIEWS[7],
+  PLATFORM_REVIEWS[7], GOOGLE_REVIEWS[8], PLATFORM_REVIEWS[8],
+  GOOGLE_REVIEWS[9], PLATFORM_REVIEWS[9], GOOGLE_REVIEWS[10],
+  GOOGLE_REVIEWS[11], GOOGLE_REVIEWS[12], GOOGLE_REVIEWS[13],
+  GOOGLE_REVIEWS[14], GOOGLE_REVIEWS[15], GOOGLE_REVIEWS[16]
+].filter(Boolean);
 
 const $ = id => document.getElementById(id);
 const SKIP = new Set(["de", "da", "do", "dos", "das", "e", "von", "van"]);
-let currentIdx = 0;
-let allCards = [];
-let currentReviews = [];
-let lastPerPage = 1;
+let currentPage = 0;
+let pages = [];
+let lastPerPage = 0;
 
 function viewportWidth() {
+  const viewport = $("viewport");
   const content = $("content");
   const widget = $("widget");
-  return Math.min(...[content?.clientWidth, widget?.clientWidth, document.documentElement.clientWidth, window.innerWidth].filter(Boolean));
+  return Math.min(...[viewport?.clientWidth, content?.clientWidth, widget?.clientWidth, document.documentElement.clientWidth, window.innerWidth].filter(Boolean));
 }
 function perPage() { return viewportWidth() >= 768 ? 3 : 1; }
-function gap() { return perPage() > 1 ? 64 : 0; }
+function chunk(items, size) {
+  const chunks = [];
+  for (let i = 0; i < items.length; i += size) chunks.push(items.slice(i, i + size));
+  return chunks;
+}
 function initials(name) {
   if (!name || name === "Anônimo") return "?";
   const parts = name.trim().split(/\s+/).filter(w => !SKIP.has(w.toLowerCase()));
   return ((parts[0]?.[0] || "") + (parts[parts.length - 1]?.[0] || "")).toUpperCase();
 }
-function displayName(name) {
-  if (!name || name === "Anônimo") return "Anônimo";
+function displayName(review) {
+  const name = review.author_name || "Anônimo";
+  if (review.source === "google" || name === "Anônimo") return name;
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0];
   return `${parts[0]} ${parts.slice(1).map(w => w[0].toUpperCase() + ".").join(" ")}`;
 }
-function stars() { return [1,2,3,4,5].map(() => '<span class="s">★</span>').join(''); }
+function stars() { return [1,2,3,4,5].map(() => '<span class="s">&#9733;</span>').join(''); }
 function escapeHTML(value) {
   return String(value || "").replace(/[&<>"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
 }
-function interleaveReviews(googleReviews, platformReviews) {
-  const hasPlatformDates = platformReviews.some(review => review.time > 0);
-  if (hasPlatformDates) {
-    return [...googleReviews, ...platformReviews].sort((a, b) => (b.time || 0) - (a.time || 0));
-  }
-  const sortedGoogle = [...googleReviews].sort((a, b) => (b.time || 0) - (a.time || 0));
-  const mixed = [];
-  const max = Math.max(sortedGoogle.length, platformReviews.length);
-  for (let i = 0; i < max; i++) {
-    if (sortedGoogle[i]) mixed.push(sortedGoogle[i]);
-    if (platformReviews[i]) mixed.push(platformReviews[i]);
-  }
-  return mixed;
-}
 function avatarHTML(review) {
-  if (review.source === "google" && review.profile_photo_url) {
-    return `<img src="${escapeHTML(review.profile_photo_url)}" alt="${escapeHTML(displayName(review.author_name))}">`;
+  const initialsText = initials(review.author_name);
+  if (review.source === "google" && review.photo) {
+    return `<div class="avatar" data-initials="${escapeHTML(initialsText)}"><img src="${escapeHTML(review.photo)}" alt="${escapeHTML(displayName(review))}" onerror="this.remove()"></div>`;
   }
-  return initials(review.author_name);
+  return `<div class="avatar" data-initials="${escapeHTML(initialsText)}">${escapeHTML(initialsText)}</div>`;
 }
 function sourceHTML(review) {
   if (review.source === "google") {
-    return `<a href="${escapeHTML(review.googleUrl)}" target="_blank" rel="noopener">Avaliação via Google</a>`;
+    return `<a href="${escapeHTML(review.sourceUrl)}" target="_blank" rel="noopener">Avaliação via Google</a>`;
   }
   return "Avaliação via plataforma";
 }
 function card(review) {
-  const name = displayName(review.author_name);
-  return `<article class="review-card">
-    <p class="review-text" lang="pt-BR">${escapeHTML(review.text)}</p>
+  const name = displayName(review);
+  return `<article class="review-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
+    <meta itemprop="itemReviewed" content="Aline Angela Nutricionista Comportamental">
+    <p class="review-text" lang="pt-BR" itemprop="reviewBody">${escapeHTML(review.text)}</p>
     <div class="card-author">
-      <div class="avatar">${avatarHTML(review)}</div>
+      ${avatarHTML(review)}
       <div class="author-details">
-        <div class="author-name-row">— ${escapeHTML(name)}</div>
-        <div class="source-label-row"><span class="star-row">${stars()}</span><span class="source-label">${sourceHTML(review)}</span></div>
+        <div class="author-name-row" itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">&mdash; ${escapeHTML(name)}</span></div>
+        <div class="source-label-row">
+          <span class="star-row" aria-label="5 de 5 estrelas">${stars()}</span>
+          <span class="source-label">${sourceHTML(review)}</span>
+        </div>
+        <span itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+          <meta itemprop="ratingValue" content="5"><meta itemprop="bestRating" content="5">
+        </span>
       </div>
     </div>
   </article>`;
 }
-function render(reviews) {
-  currentReviews = reviews;
-  lastPerPage = perPage();
-  currentIdx = 0;
-  $("content").innerHTML = `<div class="carousel-shell"><button class="arrow-btn" id="arrow-left" onclick="slide(-1)" aria-label="Avaliação anterior">&#8249;</button><div class="carousel-viewport" id="viewport"><div class="carousel-track" id="track">${reviews.map(card).join('')}</div></div><button class="arrow-btn" id="arrow-right" onclick="slide(1)" aria-label="Próxima avaliação">&#8250;</button></div>`;
-  allCards = Array.from($("track").children);
-  sizeCards();
+function render() {
+  const pp = perPage();
+  lastPerPage = pp;
+  currentPage = 0;
+  const reviewPages = chunk(REVIEWS, pp);
+  $("content").innerHTML = `<div class="carousel-shell">
+    <button class="arrow-btn" id="arrow-left" onclick="slide(-1)" aria-label="Avaliação anterior">&#8249;</button>
+    <div class="carousel-viewport" id="viewport"><div class="carousel-track" id="track">${reviewPages.map(page => `<div class="review-page">${page.map(card).join('')}</div>`).join('')}</div></div>
+    <button class="arrow-btn" id="arrow-right" onclick="slide(1)" aria-label="Próxima avaliação">&#8250;</button>
+  </div>`;
+  pages = Array.from(document.querySelectorAll(".review-page"));
+  sizePages();
   updateArrows();
   initTouch($("viewport"));
 }
-function sizeCards() {
-  const track = $("track");
-  if (!track || !allCards.length) return;
-  const pp = perPage();
-  const viewW = track.parentElement.getBoundingClientRect().width;
-  const w = pp === 1 ? viewW : (viewW - gap() * (pp - 1)) / pp;
-  allCards.forEach(card => { card.style.width = Math.max(0, w) + "px"; });
+function sizePages() {
+  const viewport = $("viewport");
+  if (!viewport || !pages.length) return;
+  const width = viewport.getBoundingClientRect().width;
+  pages.forEach(page => { page.style.width = Math.max(0, width) + "px"; });
   applyTranslate();
 }
 function applyTranslate() {
   const track = $("track");
-  if (!track || !allCards.length) return;
-  track.style.transform = `translateX(-${currentIdx * (allCards[0].offsetWidth + gap())}px)`;
+  const viewport = $("viewport");
+  if (!track || !viewport) return;
+  const width = viewport.getBoundingClientRect().width;
+  track.style.transform = `translateX(-${currentPage * width}px)`;
 }
 function updateArrows() {
-  if (!allCards.length) return;
-  const maxIdx = Math.max(0, allCards.length - perPage());
-  currentIdx = Math.min(currentIdx, maxIdx);
-  $("arrow-left")?.classList.toggle("disabled", currentIdx === 0);
-  $("arrow-right")?.classList.toggle("disabled", currentIdx >= maxIdx);
+  const maxPage = Math.max(0, pages.length - 1);
+  currentPage = Math.max(0, Math.min(currentPage, maxPage));
+  $("arrow-left")?.classList.toggle("disabled", currentPage === 0);
+  $("arrow-right")?.classList.toggle("disabled", currentPage >= maxPage);
 }
 function slide(dir) {
-  const pp = perPage();
-  const maxIdx = Math.max(0, allCards.length - pp);
-  currentIdx = Math.max(0, Math.min(currentIdx + dir * pp, maxIdx));
+  const maxPage = Math.max(0, pages.length - 1);
+  currentPage = Math.max(0, Math.min(currentPage + dir, maxPage));
   applyTranslate();
   updateArrows();
 }
@@ -354,59 +390,17 @@ function initTouch(el) {
   }, { passive: true });
 }
 function refresh() {
-  if (currentReviews.length && perPage() !== lastPerPage) return render(currentReviews);
-  currentIdx = 0;
-  sizeCards();
+  const pp = perPage();
+  if (pp !== lastPerPage) {
+    render();
+    return;
+  }
+  sizePages();
   updateArrows();
 }
 window.addEventListener("resize", refresh);
 if (window.ResizeObserver) new ResizeObserver(refresh).observe($("widget"));
-
-function normalizeGoogleReview(review, location) {
-  return {
-    author_name: review.author_name || "Usuário Google",
-    rating: review.rating || 5,
-    text: review.text || "",
-    profile_photo_url: review.profile_photo_url || "",
-    source: "google",
-    googleUrl: location.googleUrl,
-    time: review.time ? review.time * 1000 : 0
-  };
-}
-function fetchGoogleReviews() {
-  const service = new google.maps.places.PlacesService($("map"));
-  const results = new Array(CFG.locations.length).fill(null);
-  let done = 0;
-  CFG.locations.forEach((location, index) => {
-    service.getDetails({ placeId: location.placeId, fields: ["reviews"] }, (place, status) => {
-      const ok = status === google.maps.places.PlacesServiceStatus.OK;
-      const reviews = ok ? (place.reviews || []) : [];
-      results[index] = reviews
-        .filter(review => review.rating === 5 && review.text && review.text.trim())
-        .map(review => normalizeGoogleReview(review, location));
-      if (++done === CFG.locations.length) {
-        const googleReviews = results.flat();
-        render(interleaveReviews(googleReviews, PLATFORM_REVIEWS));
-      }
-    });
-  });
-}
-function start() {
-  render(PLATFORM_REVIEWS);
-  window.gm_authFailure = () => render(PLATFORM_REVIEWS);
-  if (window.google && window.google.maps) {
-    fetchGoogleReviews();
-    return;
-  }
-  window._mapsReady = fetchGoogleReviews;
-  document.getElementById("gscript")?.remove();
-  const script = document.createElement("script");
-  script.id = "gscript";
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${CFG.apiKey}&libraries=places&callback=_mapsReady`;
-  script.onerror = () => render(PLATFORM_REVIEWS);
-  document.head.appendChild(script);
-}
-start();
+render();
 </script>
 </body>
 </html>
