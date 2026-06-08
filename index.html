@@ -14,6 +14,7 @@
       --pad-x: clamp(10px, 3.6vw, 22px);
       --arrow: 28px;
       --nav-gap: clamp(14px, 4vw, 22px);
+      --card-gap: 0px;
     }
     html, body {
       width: 100%;
@@ -24,7 +25,12 @@
       font-family: Inter, sans-serif;
       overflow-x: hidden;
     }
-    .widget { width: 100%; max-width: 100%; padding: 18px var(--pad-x) 22px; background: transparent; }
+    .widget {
+      width: 100%;
+      max-width: 100%;
+      padding: 18px var(--pad-x) 22px;
+      background: transparent;
+    }
     .carousel-shell {
       width: 100%;
       display: grid;
@@ -51,16 +57,21 @@
     }
     .arrow-btn:hover { background: rgba(59, 57, 30, .1); }
     .arrow-btn.disabled { opacity: .22; pointer-events: none; }
-    .carousel-viewport { min-width: 0; overflow: hidden; touch-action: pan-y; }
+    .carousel-viewport {
+      min-width: 0;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
     .carousel-track {
       display: flex;
       align-items: flex-start;
-      gap: 0;
+      gap: var(--card-gap);
       transition: transform .38s cubic-bezier(.4, 0, .2, 1);
       will-change: transform;
       touch-action: pan-y;
     }
     .review-card {
+      position: relative;
       flex: 0 0 auto;
       min-width: 0;
       background: transparent;
@@ -83,7 +94,12 @@
     }
     .review-text::before { content: '\201C'; }
     .review-text::after { content: '\201D'; }
-    .card-author { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .card-author {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
     .avatar {
       width: 30px;
       height: 30px;
@@ -99,25 +115,83 @@
       font-weight: 600;
       overflow: hidden;
     }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
-    .author-details { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-    .author-name-row { color: var(--ink); font-size: 12.5px; line-height: 1.2; font-weight: 600; display: block; }
-    .source-label-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 7px; }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+    .author-details {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .author-name-row {
+      color: var(--ink);
+      font-size: 12.5px;
+      line-height: 1.2;
+      font-weight: 600;
+      display: block;
+    }
+    .source-label-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px 7px;
+    }
     .star-row { display: flex; gap: 1px; }
-    .star-row .s { color: rgba(59, 57, 30, .82); font-size: 10.5px; line-height: 1; }
-    .source-label, .source-label a { color: var(--ink-soft); font-size: 10.5px; line-height: 1.2; }
-    .source-label a { text-decoration: underline; text-underline-offset: 2px; }
+    .star-row .s {
+      color: rgba(59, 57, 30, .82);
+      font-size: 10.5px;
+      line-height: 1;
+    }
+    .source-label,
+    .source-label a {
+      color: var(--ink-soft);
+      font-size: 10.5px;
+      line-height: 1.2;
+    }
+    .source-label a {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
 
     @media (min-width: 768px) {
-      :root { --pad-x: 48px; --arrow: 38px; --nav-gap: 18px; }
+      :root {
+        --pad-x: 48px;
+        --arrow: 38px;
+        --nav-gap: 18px;
+        --card-gap: 64px;
+      }
       .widget { padding-top: 34px; padding-bottom: 38px; }
-      .carousel-shell { display: flex; align-items: center; gap: 0; }
-      .arrow-btn { flex: 0 0 auto; width: 38px; height: 38px; margin: 0 18px; font-size: 1.22rem; }
+      .carousel-shell {
+        display: flex;
+        align-items: center;
+        gap: 0;
+      }
+      .arrow-btn {
+        flex: 0 0 auto;
+        width: 38px;
+        height: 38px;
+        margin: 0 18px;
+        font-size: 1.22rem;
+      }
       .carousel-viewport { flex: 1; }
-      .review-card { gap: 22px; padding: 0 44px; }
-      .review-card:first-child { padding-left: 0; }
-      .review-card + .review-card { border-left: 1px solid var(--ink-line); }
-      .review-text { font-size: clamp(14px, 1.1vw, 16px); line-height: 1.64; }
+      .review-card { gap: 22px; }
+      .review-card:not(:first-child)::before {
+        content: "";
+        position: absolute;
+        left: calc(var(--card-gap) / -2);
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: var(--ink-line);
+      }
+      .review-text {
+        font-size: clamp(14px, 1.1vw, 16px);
+        line-height: 1.64;
+      }
       .avatar { width: 40px; height: 40px; font-size: 12px; }
       .author-name-row { font-size: 14px; }
       .star-row .s { font-size: 11.5px; }
@@ -171,7 +245,7 @@ function viewportWidth() {
   return Math.min(...[content?.clientWidth, widget?.clientWidth, document.documentElement.clientWidth, window.innerWidth].filter(Boolean));
 }
 function perPage() { return viewportWidth() >= 768 ? 3 : 1; }
-function gap() { return perPage() > 1 ? 32 : 0; }
+function gap() { return perPage() > 1 ? 64 : 0; }
 function initials(name) {
   if (!name || name === "Anônimo") return "?";
   const parts = name.trim().split(/\s+/).filter(w => !SKIP.has(w.toLowerCase()));
@@ -258,8 +332,9 @@ function updateArrows() {
   $("arrow-right")?.classList.toggle("disabled", currentIdx >= maxIdx);
 }
 function slide(dir) {
-  const maxIdx = Math.max(0, allCards.length - perPage());
-  currentIdx = Math.max(0, Math.min(currentIdx + dir, maxIdx));
+  const pp = perPage();
+  const maxIdx = Math.max(0, allCards.length - pp);
+  currentIdx = Math.max(0, Math.min(currentIdx + dir * pp, maxIdx));
   applyTranslate();
   updateArrows();
 }
