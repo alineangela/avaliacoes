@@ -12,7 +12,8 @@
       --ink-soft: rgba(59, 57, 30, .66);
       --ink-line: rgba(59, 57, 30, .22);
       --pad-x: clamp(10px, 3.6vw, 22px);
-      --arrow: 32px;
+      --arrow: 28px;
+      --nav-gap: clamp(14px, 4vw, 22px);
     }
     html, body {
       width: 100%;
@@ -33,34 +34,40 @@
       width: 100%;
       display: grid;
       grid-template-columns: var(--arrow) minmax(0, 1fr) var(--arrow);
-      align-items: start;
-      gap: 8px;
+      align-items: center;
+      gap: var(--nav-gap);
     }
     .arrow-btn {
       width: var(--arrow);
       height: var(--arrow);
       border-radius: 999px;
-      border: 1.4px solid rgba(59, 57, 30, .82);
+      border: 1.25px solid rgba(59, 57, 30, .78);
       background: transparent;
       color: var(--ink);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.05rem;
+      align-self: center;
+      font-size: .92rem;
       line-height: 1;
-      margin-top: 2px;
+      padding: 0;
       transition: background .2s, opacity .2s;
     }
     .arrow-btn:hover { background: rgba(59, 57, 30, .1); }
     .arrow-btn.disabled { opacity: .22; pointer-events: none; }
-    .carousel-viewport { min-width: 0; overflow: hidden; }
+    .carousel-viewport {
+      min-width: 0;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
     .carousel-track {
       display: flex;
       align-items: flex-start;
       gap: 0;
       transition: transform .38s cubic-bezier(.4, 0, .2, 1);
       will-change: transform;
+      touch-action: pan-y;
     }
     .review-card {
       flex: 0 0 auto;
@@ -79,9 +86,9 @@
       font-size: clamp(12.8px, 3.45vw, 13.8px);
       line-height: 1.58;
       font-weight: 400;
-      overflow-wrap: break-word;
+      overflow-wrap: normal;
       word-break: normal;
-      hyphens: auto;
+      hyphens: none;
     }
     .review-text::before { content: '\201C'; }
     .review-text::after { content: '\201D'; }
@@ -108,12 +115,12 @@
     .card-author {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       min-width: 0;
     }
     .avatar {
-      width: 36px;
-      height: 36px;
+      width: 30px;
+      height: 30px;
       border-radius: 999px;
       flex: 0 0 auto;
       background: rgba(59, 57, 30, .14);
@@ -122,7 +129,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 9.5px;
       font-weight: 600;
       overflow: hidden;
     }
@@ -138,16 +145,7 @@
       font-size: 12.5px;
       line-height: 1.2;
       font-weight: 600;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-    .author-last-part {
-      color: var(--ink-soft);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: .05em;
-      text-transform: uppercase;
+      display: block;
     }
     .source-label-row {
       display: flex;
@@ -164,7 +162,12 @@
       line-height: 1.2;
     }
     .source-label a { text-decoration: underline; text-underline-offset: 2px; }
-    .skel-shell { display: grid; grid-template-columns: var(--arrow) minmax(0, 1fr) var(--arrow); gap: 8px; }
+    .skel-shell {
+      display: grid;
+      grid-template-columns: var(--arrow) minmax(0, 1fr) var(--arrow);
+      align-items: center;
+      gap: var(--nav-gap);
+    }
     .skel-arrow { width: var(--arrow); height: var(--arrow); border-radius: 999px; }
     .skel-row { min-width: 0; display: flex; gap: 0; overflow: hidden; }
     .skel-card { flex: 0 0 100%; padding: 0; }
@@ -177,10 +180,10 @@
     @keyframes shim { to { background-position: -200% 0; } }
 
     @media (min-width: 760px) {
-      :root { --pad-x: 48px; --arrow: 40px; }
+      :root { --pad-x: 48px; --arrow: 38px; --nav-gap: 18px; }
       .widget { padding-top: 34px; padding-bottom: 38px; }
-      .carousel-shell { display: flex; align-items: flex-start; gap: 0; }
-      .arrow-btn { flex: 0 0 auto; width: 40px; height: 40px; margin: 4px 12px 0; font-size: 1.35rem; }
+      .carousel-shell { display: flex; align-items: center; gap: 0; }
+      .arrow-btn { flex: 0 0 auto; width: 38px; height: 38px; margin: 0 18px; font-size: 1.22rem; }
       .carousel-viewport { flex: 1; }
       .review-card { gap: 22px; padding: 0 44px; }
       .review-card:first-child { padding-left: 0; }
@@ -188,9 +191,8 @@
       .review-text { font-size: clamp(14px, 1.1vw, 16px); line-height: 1.72; }
       .review-text.is-clamped { display: block; overflow: visible; }
       .read-more { display: none; }
-      .avatar { width: 46px; height: 46px; font-size: 13px; }
+      .avatar { width: 40px; height: 40px; font-size: 12px; }
       .author-name-row { font-size: 14px; }
-      .author-last-part { font-size: 12px; }
       .star-row .s { font-size: 11.5px; }
       .source-label, .source-label a { font-size: 11px; }
     }
@@ -237,10 +239,11 @@ function initials(name) {
   const parts = name.trim().split(/\s+/).filter(w => !SKIP.has(w.toLowerCase()));
   return ((parts[0]?.[0] || "") + (parts[parts.length - 1]?.[0] || "")).toUpperCase();
 }
-function nameParts(name) {
-  if (!name || name === "Anônimo") return { first: "Anônimo", last: "" };
+function displayName(name) {
+  if (!name || name === "Anônimo") return "Anônimo";
   const parts = name.trim().split(/\s+/);
-  return { first: parts[0], last: parts.length > 1 ? parts.slice(1).map(w => w[0].toUpperCase() + ".").join(" ") : "" };
+  if (parts.length === 1) return parts[0];
+  return `${parts[0]} ${parts.slice(1).map(w => w[0].toUpperCase() + ".").join(" ")}`;
 }
 function stars() { return [1,2,3,4,5].map(() => '<span class="s">★</span>').join(''); }
 function showSkeleton() {
@@ -249,21 +252,20 @@ function showSkeleton() {
       <div class="sk" style="height:10px;width:92%;margin-bottom:8px"></div>
       <div class="sk" style="height:10px;width:78%;margin-bottom:8px"></div>
       <div class="sk" style="height:10px;width:58%;margin-bottom:18px"></div>
-      <div style="display:flex;gap:10px;align-items:center"><div class="sk" style="width:36px;height:36px;border-radius:50%"></div><div style="flex:1"><div class="sk" style="height:9px;width:48%;margin-bottom:7px"></div><div class="sk" style="height:8px;width:36%"></div></div></div>
+      <div style="display:flex;gap:9px;align-items:center"><div class="sk" style="width:30px;height:30px;border-radius:50%"></div><div style="flex:1"><div class="sk" style="height:9px;width:48%;margin-bottom:7px"></div><div class="sk" style="height:8px;width:36%"></div></div></div>
     </div>`).join('');
   $("content").innerHTML = `<div class="skel-shell"><div class="sk skel-arrow"></div><div class="skel-row">${cards}</div><div class="sk skel-arrow"></div></div>`;
 }
 function card(review, index) {
-  const { first, last } = nameParts(review.author_name);
-  const avatar = review.profile_photo_url ? `<img src="${review.profile_photo_url}" alt="${first}">` : initials(review.author_name);
-  const fullName = last ? `${first} <span class="author-last-part">${last}</span>` : first;
+  const name = displayName(review.author_name);
+  const avatar = review.profile_photo_url ? `<img src="${review.profile_photo_url}" alt="${name}">` : initials(review.author_name);
   const source = review.source === "panel" ? "Avaliação via plataforma" : `<a href="${review._googleUrl || '#'}" target="_blank" rel="noopener">Avaliação no Google</a>`;
   const clamp = review.text.length > 180 ? ' is-clamped' : '';
   const more = review.text.length > 180 ? `<button class="read-more" type="button" onclick="toggleReview(${index}, this)">Ver mais</button>` : '';
   return `<article class="review-card">
     <p class="review-text${clamp}" id="review-${index}" lang="pt-BR">${review.text}</p>
     ${more}
-    <div class="card-author"><div class="avatar">${avatar}</div><div class="author-details"><div class="author-name-row">— ${fullName}</div><div class="source-label-row"><span class="star-row">${stars()}</span><span class="source-label">${source}</span></div></div></div>
+    <div class="card-author"><div class="avatar">${avatar}</div><div class="author-details"><div class="author-name-row">— ${name}</div><div class="source-label-row"><span class="star-row">${stars()}</span><span class="source-label">${source}</span></div></div></div>
   </article>`;
 }
 function render(reviews) {
@@ -312,10 +314,15 @@ function initTouch(el) {
   if (!el || el.dataset.touchReady) return;
   el.dataset.touchReady = "1";
   let startX = 0;
-  el.addEventListener("touchstart", e => { startX = e.touches[0].clientX; }, { passive: true });
+  let startY = 0;
+  el.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
   el.addEventListener("touchend", e => {
     const dx = startX - e.changedTouches[0].clientX;
-    if (Math.abs(dx) > 40) slide(dx > 0 ? 1 : -1);
+    const dy = startY - e.changedTouches[0].clientY;
+    if (Math.abs(dx) > 38 && Math.abs(dx) > Math.abs(dy)) slide(dx > 0 ? 1 : -1);
   }, { passive: true });
 }
 function refresh() {
