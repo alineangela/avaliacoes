@@ -105,6 +105,29 @@
     }
     .review-text::before { content: '\201C'; }
     .review-text::after { content: '\201D'; }
+    .review-text.collapsed {
+      display: -webkit-box;
+      -webkit-line-clamp: 15;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .read-more-btn {
+      display: none;
+      width: fit-content;
+      margin-top: -10px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font-family: Inter, sans-serif;
+      font-size: 11px;
+      line-height: 1.2;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+    .read-more-btn.is-visible { display: inline-block; }
     .card-author {
       min-width: 0;
       display: flex;
@@ -308,7 +331,8 @@ function card(review) {
   const name = displayName(review);
   return `<article class="review-card" itemprop="review" itemscope itemtype="https://schema.org/Review">
     <meta itemprop="itemReviewed" content="Aline Angela Nutricionista Comportamental">
-    <p class="review-text" lang="pt-BR" itemprop="reviewBody">${escapeHTML(review.text)}</p>
+    <p class="review-text collapsed" lang="pt-BR" itemprop="reviewBody">${escapeHTML(review.text)}</p>
+    <button class="read-more-btn" type="button" onclick="toggleReadMore(this)">Continuar lendo</button>
     <div class="card-author">
       <div class="author-details">
         <div class="author-name-row" itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">&mdash; ${escapeHTML(name)}</span></div>
@@ -323,6 +347,26 @@ function card(review) {
     </div>
   </article>`;
 }
+
+function toggleReadMore(button) {
+  const text = button.previousElementSibling;
+  const collapsed = text.classList.toggle("collapsed");
+  button.textContent = collapsed ? "Continuar lendo" : "Mostrar menos";
+  sizePages();
+}
+function updateReadMoreButtons() {
+  document.querySelectorAll(".read-more-btn").forEach(button => {
+    const text = button.previousElementSibling;
+    text.classList.add("collapsed");
+    button.textContent = "Continuar lendo";
+    button.classList.remove("is-visible");
+    requestAnimationFrame(() => {
+      const shouldShow = text.scrollHeight > text.clientHeight + 2;
+      button.classList.toggle("is-visible", shouldShow);
+    });
+  });
+}
+
 function render() {
   const pp = perPage();
   lastPerPage = pp;
@@ -337,6 +381,7 @@ function render() {
   sizePages();
   updateArrows();
   initTouch($("viewport"));
+  updateReadMoreButtons();
 }
 function sizePages() {
   const viewport = $("viewport");
@@ -363,6 +408,7 @@ function slide(dir) {
   currentPage = Math.max(0, Math.min(currentPage + dir, maxPage));
   applyTranslate();
   updateArrows();
+  updateReadMoreButtons();
 }
 function initTouch(el) {
   if (!el || el.dataset.touchReady) return;
