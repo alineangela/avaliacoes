@@ -83,26 +83,6 @@
     }
     .review-text::before { content: '\201C'; }
     .review-text::after { content: '\201D'; }
-    .review-text.is-clamped {
-      display: -webkit-box;
-      -webkit-line-clamp: 7;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .read-more {
-      width: max-content;
-      margin-top: -7px;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: var(--ink);
-      cursor: pointer;
-      font-family: Inter, sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
     .card-author { display: flex; align-items: center; gap: 9px; min-width: 0; }
     .avatar {
       width: 30px;
@@ -119,6 +99,7 @@
       font-weight: 600;
       overflow: hidden;
     }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
     .author-details { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
     .author-name-row { color: var(--ink); font-size: 12.5px; line-height: 1.2; font-weight: 600; display: block; }
     .source-label-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 7px; }
@@ -127,7 +108,7 @@
     .source-label, .source-label a { color: var(--ink-soft); font-size: 10.5px; line-height: 1.2; }
     .source-label a { text-decoration: underline; text-underline-offset: 2px; }
 
-    @media (min-width: 760px) {
+    @media (min-width: 768px) {
       :root { --pad-x: 48px; --arrow: 38px; --nav-gap: 18px; }
       .widget { padding-top: 34px; padding-bottom: 38px; }
       .carousel-shell { display: flex; align-items: center; gap: 0; }
@@ -136,9 +117,7 @@
       .review-card { gap: 22px; padding: 0 44px; }
       .review-card:first-child { padding-left: 0; }
       .review-card + .review-card { border-left: 1px solid var(--ink-line); }
-      .review-text { font-size: clamp(14px, 1.1vw, 16px); line-height: 1.72; }
-      .review-text.is-clamped { display: block; overflow: visible; }
-      .read-more { display: none; }
+      .review-text { font-size: clamp(14px, 1.1vw, 16px); line-height: 1.64; }
       .avatar { width: 40px; height: 40px; font-size: 12px; }
       .author-name-row { font-size: 14px; }
       .star-row .s { font-size: 11.5px; }
@@ -148,36 +127,50 @@
 </head>
 <body>
 <div class="widget" id="widget"><div id="content"></div></div>
+<div id="map" style="display:none"></div>
 <script>
-const GOOGLE_PROFILES = [
-  "https://share.google/ogMIYW8WqEn9OXDlb",
-  "https://share.google/qUKYIII7ttWxf7OEA"
-];
+const CFG = {
+  apiKey: "AIzaSyBHJkUQN1gaLkH2HVXVW-V3WY6lTGJX7rs",
+  locations: [
+    {
+      label: "Google 1",
+      placeId: "ChIJM9FLeUXl3JQRIP4GrM3Iw1M",
+      googleUrl: "https://share.google/ogMIYW8WqEn9OXDlb"
+    },
+    {
+      label: "Google 2",
+      placeId: "ChIJba89okrj3JQRbHFXw3unq24",
+      googleUrl: "https://share.google/qUKYIII7ttWxf7OEA"
+    }
+  ]
+};
 
-const REVIEWS = [
-  { author_name: "Bruna Marina da Silva Almeida", rating: 5, googleUrl: GOOGLE_PROFILES[0], text: "Conversar com Aline é como se estivesse conversando com uma amiga próxima, ela entende e compreende e com base nisso, ela fala o que você precisa. Demonstra que não existe nada melhor que cuidar de nós mesmos, não só passa dieta como me ensina também!!" },
-  { author_name: "Cecília Campos Siqueira", rating: 5, googleUrl: GOOGLE_PROFILES[0], text: "Aline é uma profissional excepcional, me ajudou a ajustar a alimentação à minha rotina e às minhas necessidades, ao mesmo tempo que me apresentou novos alimentos e opções. Os atendimentos são ótimos, leves e atenciosos. Têm feito muita diferença na minha saúde e disposição para manter a constância com uma boa alimentação, que eu consigo fazer rolar no meu dia a dia e realmente gostar! Muito obrigada, querida :)" },
-  { author_name: "Ana Flavia Machado Muniz Andrade", rating: 5, googleUrl: GOOGLE_PROFILES[0], text: "Muito atenciosa e gentil. Disposta a entender e ouvir as necessidades do paciente. Parabéns Aline!" },
-  { author_name: "Thalita Oliveira", rating: 5, googleUrl: GOOGLE_PROFILES[1], text: "Super atenciosa e cuidadosa! Verifica de fato suas necessidades e mais do que isso adapta as orientações de forma palpável ao que vc pode fazer. Isso facilita já que a grande maioria não verifica se de fato vc vai conseguir seguir as orientações! Estou amando trabalhar com ela!" },
-  { author_name: "Karolina Candido Silva Ferrari", rating: 5, googleUrl: GOOGLE_PROFILES[1], text: "Adorei a consulta, muito simpática, sabe ouvir e entender nosssa rotina." },
-  { author_name: "Elaine Magi Vieira Marquezini", rating: 5, googleUrl: GOOGLE_PROFILES[1], text: "Atenciosa e com boa disposição para interação entre paciente e profissional!" },
-  { author_name: "Anônimo", rating: 5, googleUrl: GOOGLE_PROFILES[0], text: "Perfeita em tudo, atendendo além das expectativas!!" },
-  { author_name: "Bruna Marina da Silva Almeida", rating: 5, googleUrl: GOOGLE_PROFILES[0], text: "Mudou minha visão sobre o profissional da nutrição e pretendo seguir a risca cada dica e conselho!" },
-  { author_name: "Cecília Campos Siqueira", rating: 5, googleUrl: GOOGLE_PROFILES[0], text: "Muito querida e muito simpática, fez questão de conhecer meus hábitos e minha rotina para ajustar meu plano alimentar a isso, e não impor uma dieta que eu não daria conta de seguir no dia a dia. Tem várias dicas e receitas legais e vai sugerindo alimentos novos para experimentar sem forçar." },
-  { author_name: "Anônimo", rating: 5, googleUrl: GOOGLE_PROFILES[1], text: "Adorei a abordagem da Aline, super querida, me ouviu bastante, entendeu minha realidade e adaptou tudo para seguirmos da melhor forma!" }
-];
+const PLATFORM_REVIEWS = [
+  { author_name: "Bruna Marina da Silva Almeida", rating: 5, text: "Conversar com Aline é como se estivesse conversando com uma amiga próxima, ela entende e compreende e com base nisso, ela fala o que você precisa. Demonstra que não existe nada melhor que cuidar de nós mesmos, não só passa dieta como me ensina também!!", source: "platform" },
+  { author_name: "Cecília Campos Siqueira", rating: 5, text: "Aline é uma profissional excepcional, me ajudou a ajustar a alimentação à minha rotina e às minhas necessidades, ao mesmo tempo que me apresentou novos alimentos e opções. Os atendimentos são ótimos, leves e atenciosos. Têm feito muita diferença na minha saúde e disposição para manter a constância com uma boa alimentação, que eu consigo fazer rolar no meu dia a dia e realmente gostar! Muito obrigada, querida :)", source: "platform" },
+  { author_name: "Ana Flavia Machado Muniz Andrade", rating: 5, text: "Muito atenciosa e gentil. Disposta a entender e ouvir as necessidades do paciente. Parabéns Aline!", source: "platform" },
+  { author_name: "Thalita Oliveira", rating: 5, text: "Super atenciosa e cuidadosa! Verifica de fato suas necessidades e mais do que isso adapta as orientações de forma palpável ao que vc pode fazer. Isso facilita já que a grande maioria não verifica se de fato vc vai conseguir seguir as orientações! Estou amando trabalhar com ela!", source: "platform" },
+  { author_name: "Karolina Candido Silva Ferrari", rating: 5, text: "Adorei a consulta, muito simpática, sabe ouvir e entender nosssa rotina.", source: "platform" },
+  { author_name: "Elaine Magi Vieira Marquezini", rating: 5, text: "Atenciosa e com boa disposição para interação entre paciente e profissional!", source: "platform" },
+  { author_name: "Anônimo", rating: 5, text: "Perfeita em tudo, atendendo além das expectativas!!", source: "platform" },
+  { author_name: "Bruna Marina da Silva Almeida", rating: 5, text: "Mudou minha visão sobre o profissional da nutrição e pretendo seguir a risca cada dica e conselho!", source: "platform" },
+  { author_name: "Cecília Campos Siqueira", rating: 5, text: "Muito querida e muito simpática, fez questão de conhecer meus hábitos e minha rotina para ajustar meu plano alimentar a isso, e não impor uma dieta que eu não daria conta de seguir no dia a dia. Tem várias dicas e receitas legais e vai sugerindo alimentos novos para experimentar sem forçar.", source: "platform" },
+  { author_name: "Anônimo", rating: 5, text: "Adorei a abordagem da Aline, super querida, me ouviu bastante, entendeu minha realidade e adaptou tudo para seguirmos da melhor forma!", source: "platform" }
+].map((review, index) => ({ ...review, platformOrder: index, time: review.date ? Date.parse(review.date) : 0 }));
 
 const $ = id => document.getElementById(id);
 const SKIP = new Set(["de", "da", "do", "dos", "das", "e", "von", "van"]);
 let currentIdx = 0;
 let allCards = [];
+let currentReviews = [];
 let lastPerPage = 1;
+
 function viewportWidth() {
   const content = $("content");
   const widget = $("widget");
   return Math.min(...[content?.clientWidth, widget?.clientWidth, document.documentElement.clientWidth, window.innerWidth].filter(Boolean));
 }
-function perPage() { return viewportWidth() >= 980 ? 3 : 1; }
+function perPage() { return viewportWidth() >= 768 ? 3 : 1; }
 function gap() { return perPage() > 1 ? 32 : 0; }
 function initials(name) {
   if (!name || name === "Anônimo") return "?";
@@ -191,21 +184,53 @@ function displayName(name) {
   return `${parts[0]} ${parts.slice(1).map(w => w[0].toUpperCase() + ".").join(" ")}`;
 }
 function stars() { return [1,2,3,4,5].map(() => '<span class="s">★</span>').join(''); }
-function card(review, index) {
+function escapeHTML(value) {
+  return String(value || "").replace(/[&<>"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+}
+function interleaveReviews(googleReviews, platformReviews) {
+  const hasPlatformDates = platformReviews.some(review => review.time > 0);
+  if (hasPlatformDates) {
+    return [...googleReviews, ...platformReviews].sort((a, b) => (b.time || 0) - (a.time || 0));
+  }
+  const sortedGoogle = [...googleReviews].sort((a, b) => (b.time || 0) - (a.time || 0));
+  const mixed = [];
+  const max = Math.max(sortedGoogle.length, platformReviews.length);
+  for (let i = 0; i < max; i++) {
+    if (sortedGoogle[i]) mixed.push(sortedGoogle[i]);
+    if (platformReviews[i]) mixed.push(platformReviews[i]);
+  }
+  return mixed;
+}
+function avatarHTML(review) {
+  if (review.source === "google" && review.profile_photo_url) {
+    return `<img src="${escapeHTML(review.profile_photo_url)}" alt="${escapeHTML(displayName(review.author_name))}">`;
+  }
+  return initials(review.author_name);
+}
+function sourceHTML(review) {
+  if (review.source === "google") {
+    return `<a href="${escapeHTML(review.googleUrl)}" target="_blank" rel="noopener">Avaliação via Google</a>`;
+  }
+  return "Avaliação via plataforma";
+}
+function card(review) {
   const name = displayName(review.author_name);
-  const source = `<a href="${review.googleUrl}" target="_blank" rel="noopener">Avaliação via Google</a>`;
-  const clamp = review.text.length > 180 ? ' is-clamped' : '';
-  const more = review.text.length > 180 ? `<button class="read-more" type="button" onclick="toggleReview(${index}, this)">Ver mais</button>` : '';
   return `<article class="review-card">
-    <p class="review-text${clamp}" id="review-${index}" lang="pt-BR">${review.text}</p>
-    ${more}
-    <div class="card-author"><div class="avatar">${initials(review.author_name)}</div><div class="author-details"><div class="author-name-row">— ${name}</div><div class="source-label-row"><span class="star-row">${stars()}</span><span class="source-label">${source}</span></div></div></div>
+    <p class="review-text" lang="pt-BR">${escapeHTML(review.text)}</p>
+    <div class="card-author">
+      <div class="avatar">${avatarHTML(review)}</div>
+      <div class="author-details">
+        <div class="author-name-row">— ${escapeHTML(name)}</div>
+        <div class="source-label-row"><span class="star-row">${stars()}</span><span class="source-label">${sourceHTML(review)}</span></div>
+      </div>
+    </div>
   </article>`;
 }
-function render() {
+function render(reviews) {
+  currentReviews = reviews;
   lastPerPage = perPage();
   currentIdx = 0;
-  $("content").innerHTML = `<div class="carousel-shell"><button class="arrow-btn" id="arrow-left" onclick="slide(-1)" aria-label="Avaliação anterior">&#8249;</button><div class="carousel-viewport" id="viewport"><div class="carousel-track" id="track">${REVIEWS.map(card).join('')}</div></div><button class="arrow-btn" id="arrow-right" onclick="slide(1)" aria-label="Próxima avaliação">&#8250;</button></div>`;
+  $("content").innerHTML = `<div class="carousel-shell"><button class="arrow-btn" id="arrow-left" onclick="slide(-1)" aria-label="Avaliação anterior">&#8249;</button><div class="carousel-viewport" id="viewport"><div class="carousel-track" id="track">${reviews.map(card).join('')}</div></div><button class="arrow-btn" id="arrow-right" onclick="slide(1)" aria-label="Próxima avaliação">&#8250;</button></div>`;
   allCards = Array.from($("track").children);
   sizeCards();
   updateArrows();
@@ -217,7 +242,7 @@ function sizeCards() {
   const pp = perPage();
   const viewW = track.parentElement.getBoundingClientRect().width;
   const w = pp === 1 ? viewW : (viewW - gap() * (pp - 1)) / pp;
-  allCards.forEach(c => { c.style.width = Math.max(0, w) + "px"; });
+  allCards.forEach(card => { card.style.width = Math.max(0, w) + "px"; });
   applyTranslate();
 }
 function applyTranslate() {
@@ -238,11 +263,6 @@ function slide(dir) {
   applyTranslate();
   updateArrows();
 }
-function toggleReview(index, btn) {
-  const el = $("review-" + index);
-  const clamped = el.classList.toggle("is-clamped");
-  btn.textContent = clamped ? "Ver mais" : "Ver menos";
-}
 function initTouch(el) {
   if (!el || el.dataset.touchReady) return;
   el.dataset.touchReady = "1";
@@ -259,14 +279,59 @@ function initTouch(el) {
   }, { passive: true });
 }
 function refresh() {
-  if (perPage() !== lastPerPage) return render();
+  if (currentReviews.length && perPage() !== lastPerPage) return render(currentReviews);
   currentIdx = 0;
   sizeCards();
   updateArrows();
 }
 window.addEventListener("resize", refresh);
 if (window.ResizeObserver) new ResizeObserver(refresh).observe($("widget"));
-render();
+
+function normalizeGoogleReview(review, location) {
+  return {
+    author_name: review.author_name || "Usuário Google",
+    rating: review.rating || 5,
+    text: review.text || "",
+    profile_photo_url: review.profile_photo_url || "",
+    source: "google",
+    googleUrl: location.googleUrl,
+    time: review.time ? review.time * 1000 : 0
+  };
+}
+function fetchGoogleReviews() {
+  const service = new google.maps.places.PlacesService($("map"));
+  const results = new Array(CFG.locations.length).fill(null);
+  let done = 0;
+  CFG.locations.forEach((location, index) => {
+    service.getDetails({ placeId: location.placeId, fields: ["reviews"] }, (place, status) => {
+      const ok = status === google.maps.places.PlacesServiceStatus.OK;
+      const reviews = ok ? (place.reviews || []) : [];
+      results[index] = reviews
+        .filter(review => review.rating === 5 && review.text && review.text.trim())
+        .map(review => normalizeGoogleReview(review, location));
+      if (++done === CFG.locations.length) {
+        const googleReviews = results.flat();
+        render(interleaveReviews(googleReviews, PLATFORM_REVIEWS));
+      }
+    });
+  });
+}
+function start() {
+  render(PLATFORM_REVIEWS);
+  window.gm_authFailure = () => render(PLATFORM_REVIEWS);
+  if (window.google && window.google.maps) {
+    fetchGoogleReviews();
+    return;
+  }
+  window._mapsReady = fetchGoogleReviews;
+  document.getElementById("gscript")?.remove();
+  const script = document.createElement("script");
+  script.id = "gscript";
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${CFG.apiKey}&libraries=places&callback=_mapsReady`;
+  script.onerror = () => render(PLATFORM_REVIEWS);
+  document.head.appendChild(script);
+}
+start();
 </script>
 </body>
 </html>
