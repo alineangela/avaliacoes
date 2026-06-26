@@ -28,7 +28,7 @@
     .widget {
       width: 100%;
       max-width: 100%;
-      padding: clamp(18px, 5vh, 32px) var(--pad-x) clamp(40px, 9vh, 70px);
+      padding: clamp(16px, 4vh, 28px) var(--pad-x) clamp(24px, 5vh, 36px);
       background: transparent;
     }
     .carousel-shell {
@@ -41,7 +41,7 @@
         "left line right";
       align-items: center;
       column-gap: clamp(10px, 4vw, 18px);
-      row-gap: clamp(14px, 4vw, 20px);
+      row-gap: clamp(10px, 3vw, 14px);
     }
     .carousel-shell::before {
       content: "";
@@ -100,7 +100,7 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      gap: 18px;
+      gap: 12px;
       padding: 0;
     }
     .review-text {
@@ -108,7 +108,7 @@
       color: var(--ink);
       font-family: Inter, sans-serif;
       font-size: clamp(13px, 3.5vw, 14px);
-      line-height: 1.58;
+      line-height: 1.54;
       font-weight: 400;
       overflow-wrap: break-word;
       word-break: normal;
@@ -119,14 +119,14 @@
     .review-text::after { content: '\201D'; }
     .review-text.collapsed {
       display: -webkit-box;
-      -webkit-line-clamp: 12;
+      -webkit-line-clamp: 11;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
     .read-more-btn {
       display: none;
       width: fit-content;
-      margin-top: -10px;
+      margin-top: -4px;
       padding: 0;
       border: 0;
       background: transparent;
@@ -187,11 +187,11 @@
         --arrow: 38px;
         --page-gap: 96px;
       }
-      .widget { padding-top: 34px; padding-bottom: 42px; }
+      .widget { padding-top: 28px; padding-bottom: 30px; }
       .carousel-shell {
         grid-template-columns: var(--arrow) minmax(80px, 1fr) var(--arrow);
         column-gap: 20px;
-        row-gap: 28px;
+        row-gap: 14px;
       }
       .arrow-btn {
         width: 38px;
@@ -203,7 +203,7 @@
         column-gap: var(--page-gap);
         row-gap: 0;
       }
-      .review-card { gap: 22px; }
+      .review-card { gap: 14px; }
       .review-card:not(:first-child)::before {
         content: "";
         position: absolute;
@@ -215,9 +215,9 @@
       }
       .review-text {
         font-size: clamp(13.5px, .95vw, 15px);
-        line-height: 1.55;
+        line-height: 1.52;
       }
-      .review-text.collapsed { -webkit-line-clamp: 15; }
+      .review-text.collapsed { -webkit-line-clamp: 11; }
       .author-name-row { font-size: 14px; }
       .star-row .s { font-size: 11.5px; }
       .source-label, .source-label a { font-size: 11px; }
