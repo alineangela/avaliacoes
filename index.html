@@ -11,11 +11,9 @@
       --ink: #3B391E;
       --ink-soft: rgba(59, 57, 30, .66);
       --ink-line: rgba(59, 57, 30, .22);
-      --pad-x: clamp(14px, 5vw, 20px);
+      --pad-x: clamp(18px, 6vw, 24px);
       --arrow: 30px;
-      --nav-gap: clamp(24px, 7vw, 34px);
       --page-gap: 0px;
-      --mobile-stage: clamp(390px, 72vh, 520px);
     }
     html, body {
       width: 100%;
@@ -35,11 +33,22 @@
     }
     .carousel-shell {
       width: 100%;
-      min-height: var(--mobile-stage);
+      min-height: 0;
       display: grid;
-      grid-template-columns: var(--arrow) minmax(0, 1fr) var(--arrow);
+      grid-template-columns: var(--arrow) minmax(36px, 1fr) var(--arrow);
+      grid-template-areas:
+        "viewport viewport viewport"
+        "left line right";
       align-items: center;
-      gap: var(--nav-gap);
+      column-gap: clamp(10px, 4vw, 18px);
+      row-gap: clamp(26px, 7vw, 36px);
+    }
+    .carousel-shell::before {
+      content: "";
+      grid-area: line;
+      width: 100%;
+      height: 1px;
+      background: rgba(59, 57, 30, .5);
     }
     .arrow-btn {
       width: var(--arrow);
@@ -58,9 +67,12 @@
       padding: 0;
       transition: background .2s, opacity .2s;
     }
+    #arrow-left { grid-area: left; }
+    #arrow-right { grid-area: right; }
     .arrow-btn:hover { background: rgba(59, 57, 30, .1); }
     .arrow-btn.disabled { opacity: .22; pointer-events: none; }
     .carousel-viewport {
+      grid-area: viewport;
       min-width: 0;
       overflow: hidden;
       touch-action: pan-y;
@@ -74,10 +86,10 @@
     .review-page {
       flex: 0 0 auto;
       min-width: 0;
-      min-height: var(--mobile-stage);
+      min-height: 0;
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      align-items: center;
+      align-items: start;
       gap: 22px;
     }
     .review-card {
@@ -87,7 +99,7 @@
       color: var(--ink);
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 18px;
       padding: 0;
     }
@@ -95,8 +107,8 @@
       margin: 0;
       color: var(--ink);
       font-family: Inter, sans-serif;
-      font-size: clamp(12.8px, 3.45vw, 13.8px);
-      line-height: 1.56;
+      font-size: clamp(13px, 3.5vw, 14px);
+      line-height: 1.58;
       font-weight: 400;
       overflow-wrap: break-word;
       word-break: normal;
@@ -173,35 +185,25 @@
       :root {
         --pad-x: 58px;
         --arrow: 38px;
-        --nav-gap: 0px;
         --page-gap: 96px;
-        --mobile-stage: auto;
       }
       .widget { padding-top: 34px; padding-bottom: 42px; }
       .carousel-shell {
-        min-height: 0;
-        display: flex;
-        align-items: center;
+        grid-template-columns: var(--arrow) minmax(80px, 1fr) var(--arrow);
+        column-gap: 20px;
+        row-gap: 40px;
       }
       .arrow-btn {
-        flex: 0 0 auto;
         width: 38px;
         height: 38px;
-        margin: 0 32px;
         font-size: 1.22rem;
       }
-      .carousel-viewport { flex: 1; }
       .review-page {
-        min-height: 0;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         column-gap: var(--page-gap);
         row-gap: 0;
-        align-items: start;
       }
-      .review-card {
-        justify-content: flex-start;
-        gap: 22px;
-      }
+      .review-card { gap: 22px; }
       .review-card:not(:first-child)::before {
         content: "";
         position: absolute;
