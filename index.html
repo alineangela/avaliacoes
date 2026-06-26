@@ -41,7 +41,7 @@
         "left line right";
       align-items: center;
       column-gap: clamp(10px, 4vw, 18px);
-      row-gap: clamp(26px, 7vw, 36px);
+      row-gap: clamp(14px, 4vw, 20px);
     }
     .carousel-shell::before {
       content: "";
@@ -119,7 +119,7 @@
     .review-text::after { content: '\201D'; }
     .review-text.collapsed {
       display: -webkit-box;
-      -webkit-line-clamp: 15;
+      -webkit-line-clamp: 12;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -191,7 +191,7 @@
       .carousel-shell {
         grid-template-columns: var(--arrow) minmax(80px, 1fr) var(--arrow);
         column-gap: 20px;
-        row-gap: 40px;
+        row-gap: 28px;
       }
       .arrow-btn {
         width: 38px;
@@ -217,6 +217,7 @@
         font-size: clamp(13.5px, .95vw, 15px);
         line-height: 1.55;
       }
+      .review-text.collapsed { -webkit-line-clamp: 15; }
       .author-name-row { font-size: 14px; }
       .star-row .s { font-size: 11.5px; }
       .source-label, .source-label a { font-size: 11px; }
